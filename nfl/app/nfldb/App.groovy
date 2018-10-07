@@ -1,20 +1,19 @@
 package nfldb
 
-class Main {
+class App {
 
     static main(String... args) {
-        new Main() .start(args)
+        new App() .start(args)
     }
 
-    def start(String... args) {
+    def start(params) {
         show_prompt()
         def exp
         while (exp = System.console().readLine()) {
-            if (exp =~ '\\s*[Yy]\\s*') {
-                println "Shooting..."
-            } else {
+            if (exp =~ '\\s*[Qq]quit|[Ee]xit\\s*') {
                 println "Bye."
                 break
+            } else {
             }
             show_prompt()
         }
@@ -22,6 +21,6 @@ class Main {
 
     def show_prompt() {
         //println "Bullet in $gun.loaded"
-        print "Shoot? [y/N] "
+        print "Choose action: [quit to exit] "
     }
 }
