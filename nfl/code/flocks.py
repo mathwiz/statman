@@ -40,11 +40,11 @@ def find_team(line):
 
 
 def find_number(line):
-    pickem = re.search(r'.*Pick Em.*',line)
-    noline = re.search(r'.*No Line.*',line)
+    pickem = re.search(r'.*PK.*',line)
+    nonum = not re.search(r'.*<TD>.*\d?</TD>.*',line)
     match = re.match(r'.*<TD>(.*)</TD>.*',line)
     val = None
-    if pickem or noline:
+    if pickem or nonum:
         val = 99.0
     elif match != None:
         val = float(match.group(1))
@@ -52,14 +52,10 @@ def find_number(line):
 
 
 def find_money(line):
-    pickem = False #re.search(r'.*Pick Em.*',line)
-    noline = False #re.search(r'.*No Line.*',line)
-    match = re.match(r'.*<TD>-\$(\d{3}).*\+\$(\d{3})</TD>.*',line)
+    match = re.match(r'.*<TD>([\-\+]{1})\$(\d{3}).*([\-\+]{1})\$(\d{3})</TD>.*',line)
     val = (None, None)
-    if pickem or noline:
-        val = (0.0, 0.0)
-    elif match != None:
-        val = (int(match.group(1)) * -1, int(match.group(2)))
+    if match != None:
+        val = (int(match.group(1)+match.group(2)), int(match.group(3)+match.group(4)))
     return val
 
 
@@ -73,6 +69,17 @@ def make_row(season, week, game, line):
               game['date'].date(), game['date'].time(), 
               game['favorite'], game['underdog'], game['home_team'], game['away_team'],
               game['fav_money'], game['und_money'], game['total'], game['spread'] 
+              ]
+        print(row)
+        writer.writerow(row)
+
+
+def make_header():
+        row = ['key',
+              'season', 'week', 
+              'date', 'time', 
+              'favorite', 'underdog', 'home_team', 'away_team',
+              'fav_money', 'und_money', 'total', 'spread' 
               ]
         print(row)
         writer.writerow(row)
@@ -92,6 +99,7 @@ def process(file):
     game = {}
     line_num = 999999
     game_total = 0
+    make_header()
     with open(file) as f:
         for line in f:
             line_num += 1
