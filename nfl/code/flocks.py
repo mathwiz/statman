@@ -5,7 +5,7 @@ import csv
 
 
 prog = sys.argv[0]
-file = '../data/games/Week_3_NFL_Odds.html' if len(sys.argv) < 2 else sys.argv[1]
+file = '../data/games/Week_4_NFL_Odds.html' if len(sys.argv) < 2 else sys.argv[1]
 outfile = 'a.csv' if len(sys.argv) < 3 else sys.argv[2]
 output = open(outfile, mode='w')
 writer = csv.writer(output, lineterminator='\n', quoting=csv.QUOTE_NONNUMERIC)
@@ -29,17 +29,18 @@ def find_date(line, season):
 
 def find_team(line):
     home = re.search(r'.*<TD>At .*</TD>',line)
-    neutral = re.search(r'.*<TD>At [^<]*$',line)
-    if neutral:
-        match = re.match(r'.*<TD>At ([^<]*)$',line)
-    elif home:
+    away = re.search(r'.*<TD>((?!At ).)*</TD>',line)
+    neutral = not bool(home) and not bool(away)
+    if home:
         match = re.match(r'.*<TD>At ([^<]*)</TD>',line)
+    elif neutral:
+        match = re.match(r'.*<TD>([^<]*)',line)
     else:
         match = re.match(r'.*<TD>([^<]*)</TD>',line)
     if match != None:
-        val = match.group(1).upper().rstrip()
-        return (val, bool(home), bool(neutral))
-    return (None, None)
+        val = match.group(1).upper().rstrip().lstrip()        
+        return (val, bool(home), bool(away))
+    return (None, None, None)
 
 
 def find_number(line):
@@ -88,15 +89,15 @@ def make_header():
         writer.writerow(row)
 
 
-def set_home_away(game, team, home, neutral):
-    print("setting team", home, team)
-    if neutral:
-        game['home_team'] = "NEUTRAL"
-        game['away_team'] = "NEUTRAL"
-    elif home:
+def set_home_away(game, team, home, away):
+    print(team,home,away)
+    if home:
         game['home_team'] = team
-    else:
+    elif away:
         game['away_team'] = team
+    else:
+        game['home_team'] = team
+        
 
 
 def process(file):
@@ -109,6 +110,9 @@ def process(file):
     make_header()
     with open(file) as f:
         for line in f:
+            # protect against <TD> spread over many lines
+            if line_num < 7 and not re.search(r'.*<TD>',line):
+                continue
             line_num += 1
             season, week = check_season_and_week(line, season, week)
             date = find_date(line, season)
