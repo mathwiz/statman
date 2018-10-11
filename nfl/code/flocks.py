@@ -5,7 +5,7 @@ import csv
 
 
 prog = sys.argv[0]
-file = '../data/games/Week_1_NFL_Odds.html' if len(sys.argv) < 2 else sys.argv[1]
+file = '../data/games/Week_3_NFL_Odds.html' if len(sys.argv) < 2 else sys.argv[1]
 outfile = 'a.csv' if len(sys.argv) < 3 else sys.argv[2]
 output = open(outfile, mode='w')
 writer = csv.writer(output, lineterminator='\n', quoting=csv.QUOTE_NONNUMERIC)
@@ -28,14 +28,17 @@ def find_date(line, season):
 
 
 def find_team(line):
-    home = re.search(r'.*<TD>At .*</TD>.*',line)
-    if home:
-        match = re.match(r'.*<TD>At (.*)</TD>.*',line)
+    home = re.search(r'.*<TD>At .*</TD>',line)
+    neutral = re.search(r'.*<TD>At [^<]*$',line)
+    if neutral:
+        match = re.match(r'.*<TD>At ([^<]*)$',line)
+    elif home:
+        match = re.match(r'.*<TD>At ([^<]*)</TD>',line)
     else:
-        match = re.match(r'.*<TD>(.*)</TD>.*',line)
+        match = re.match(r'.*<TD>([^<]*)</TD>',line)
     if match != None:
-        val = match.group(1).upper()
-        return (val, home)
+        val = match.group(1).upper().rstrip()
+        return (val, bool(home), bool(neutral))
     return (None, None)
 
 
@@ -85,8 +88,12 @@ def make_header():
         writer.writerow(row)
 
 
-def set_home_away(game, team, home):
-    if home:
+def set_home_away(game, team, home, neutral):
+    print("setting team", home, team)
+    if neutral:
+        game['home_team'] = "NEUTRAL"
+        game['away_team'] = "NEUTRAL"
+    elif home:
         game['home_team'] = team
     else:
         game['away_team'] = team
@@ -110,11 +117,11 @@ def process(file):
                 game = {}
                 game['date'] = date
             if line_num == 2:
-                game['favorite'], home = find_team(line)
-                set_home_away(game, game['favorite'], home)
+                game['favorite'], home, neutral = find_team(line)
+                set_home_away(game, game['favorite'], home, neutral)
             if line_num == 4:
-                game['underdog'], home = find_team(line)
-                set_home_away(game, game['underdog'], home)
+                game['underdog'], home, neutral = find_team(line)
+                set_home_away(game, game['underdog'], home, neutral)
             if line_num == 3:
                 game['spread'] = find_number(line)
             if line_num == 5:
