@@ -1,0 +1,4 @@
+package nfldb
+
+class FileRegistry {
+}
