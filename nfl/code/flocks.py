@@ -38,7 +38,9 @@ def find_team(line):
     else:
         match = re.match(r'.*<TD>([^<]*)</TD>',line)
     if match != None:
-        val = match.group(1).upper().rstrip().lstrip()        
+        val = match.group(1).upper().rstrip().lstrip()
+        if val[:3] == 'AT ':
+            val = val[3:]
         return (val, bool(home), bool(away))
     return (None, None, None)
 
@@ -74,7 +76,8 @@ def make_row(season, week, game, line):
               game['favorite'], game['underdog'], game['home_team'], game['away_team'],
               game['fav_money'], game['und_money'], game['total'], game['spread'] 
               ]
-        print(row)
+        if 'AT ' in game['home_team']:
+            print(row)
         writer.writerow(row)
 
 
@@ -85,12 +88,12 @@ def make_header():
               'favorite', 'underdog', 'home_team', 'away_team',
               'fav_money', 'und_money', 'total', 'spread' 
               ]
-        print(row)
+        #print(row)
         writer.writerow(row)
 
 
 def set_home_away(game, team, home, away):
-    print(team,home,away)
+    #print(team,home,away)
     if home:
         game['home_team'] = team
     elif away:
@@ -110,9 +113,6 @@ def process(file):
     make_header()
     with open(file) as f:
         for line in f:
-            # protect against <TD> spread over many lines
-            if line_num < 7 and not re.search(r'.*<TD>',line):
-                continue
             line_num += 1
             season, week = check_season_and_week(line, season, week)
             date = find_date(line, season)
