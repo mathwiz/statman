@@ -29,14 +29,11 @@ def find_date(line, season):
 
 def find_team(line):
     home = re.search(r'.*<TD>At .*</TD>',line)
-    away = re.search(r'.*<TD>((?!At ).)*</TD>',line)
-    neutral = not bool(home) and not bool(away)
+    away = not bool(home) 
     if home:
         match = re.match(r'.*<TD>At ([^<]*)</TD>',line)
-    elif neutral:
-        match = re.match(r'.*<TD>([^<]*)',line)
     else:
-        match = re.match(r'.*<TD>([^<]*)</TD>',line)
+        match = re.match(r'.*<TD>([^<]*)',line)
     if match != None:
         val = match.group(1).upper().rstrip().lstrip()
         if val[:3] == 'AT ':
@@ -66,19 +63,16 @@ def find_money(line):
 
 
 def make_row(season, week, game, line):
-    if 'home_team' not in game:
-        print("No home_team", line)
-    else:
-        key = f'{game["date"].date().year}-{week}-{game["away_team"]}-{game["home_team"]}'
-        row = [key,
-              season, week, 
-              game['date'].date(), game['date'].time(), 
-              game['favorite'], game['underdog'], game['home_team'], game['away_team'],
-              game['fav_money'], game['und_money'], game['total'], game['spread'] 
-              ]
-        if 'AT ' in game['home_team']:
-            print(row)
-        writer.writerow(row)
+    key = f'{game["date"].date().year}-{week}-{game["favorite"]}-{game["underdog"]}'                
+    row = [key,
+          season, week, 
+          game['date'].date(), game['date'].time(), 
+          game['favorite'], game['underdog'], game['home_team'], game['away_team'],
+          game['fav_money'], game['und_money'], game['total'], game['spread'] 
+          ]
+    if 'AT ' in game['home_team']:
+        print(row)
+    writer.writerow(row)
 
 
 def make_header():
@@ -93,13 +87,11 @@ def make_header():
 
 
 def set_home_away(game, team, home, away):
-    print(game)
+#    print(game)
     if home:
         game['home_team'] = team
     elif away:
         game['away_team'] = team
-    else:
-        game['home_team'] = team
         
 
 
@@ -115,7 +107,7 @@ def process(file):
     with open(file) as f:
         for line in f:
             season, week = check_season_and_week(line, season, week)
-            current_line += line.lstrip().rstrip()
+            current_line = line.lstrip().rstrip()
             line_num += 1
             date = find_date(current_line, season)
             if date != None:
@@ -123,25 +115,19 @@ def process(file):
                 game = {}
                 game['date'] = date
                 game_total += 1
-                current_line = ""
             if line_num == 2:
-                game['favorite'], home, neutral = find_team(current_line)
-                set_home_away(game, game['favorite'], home, neutral)
-                current_line = ""
+                game['favorite'], home, away = find_team(current_line)
+                set_home_away(game, game['favorite'], home, away)
             if line_num == 4:
-                game['underdog'], home, neutral = find_team(current_line)
-                set_home_away(game, game['underdog'], home, neutral)
-                current_line = ""
+                game['underdog'], home, away = find_team(current_line)
+                set_home_away(game, game['underdog'], home, away)
             if line_num == 3:
                 game['spread'] = find_number(current_line)
-                current_line = ""
             if line_num == 5:
                 game['total'] = find_number(current_line)
-                current_line = ""
             if line_num == 6:
                 game['fav_money'], game['und_money'] = find_money(current_line)
                 make_row(season, week, game, current_line)
-                current_line = ""
     return game_total
 
 
