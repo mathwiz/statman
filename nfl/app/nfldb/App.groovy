@@ -20,7 +20,6 @@ class App {
     }
 
     def show_prompt() {
-        //println "Bullet in $gun.loaded"
         print "Choose action: [quit to exit] "
     }
 }
