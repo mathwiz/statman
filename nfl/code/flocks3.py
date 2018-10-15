@@ -95,7 +95,7 @@ def make_line(season, week, text):
 
 
 def make_key(season, week, away, home):
-    f'{year}-{week}-{away}-{home}'
+    f'{season}-{week}-{away}-{home}'
     
 
 def set_game_property(name, val, game):
