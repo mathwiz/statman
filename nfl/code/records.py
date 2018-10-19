@@ -45,28 +45,23 @@ def add_game(team, season, week, win, loss):
     key = f'{team}-{season}'
     if key not in records:
         records[key] = {'wins': 0, 'losses': 0, 'ties': 0, \
-        'win_history': {0: 0, 1: 0, 2: 0, 3: 0}} #todo: make this span seasons
+        'win_history': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]} #todo: make this span seasons
     records[key]['wins'] = records[key]['wins'] + (1 if win else 0)
     records[key]['losses'] = records[key]['losses'] + (1 if loss else 0)
     records[key]['ties'] = records[key]['ties'] + (0 if win or loss else 1)
-    increment_history(team, season, week, win)
-
-
-def increment_history(team, season, week, win):
-    key = f'{team}-{season}'
-    functions.update_past_weeks(records[key]['win_history'], win)
+    records[key]['win_history'] = functions.update_past_weeks(records[key]['win_history'], win)
 
 
 def output_row(season, week, home, away, row):
     print(season, week, home, away, \
     records[f'{home}-{season}']['wins'], \
     records[f'{away}-{season}']['wins'], \
-    records[f'{home}-{season}']['win_history'][1], \
-    records[f'{away}-{season}']['win_history'][1], \
-    records[f'{home}-{season}']['win_history'][2], \
-    records[f'{away}-{season}']['win_history'][2], \
-    records[f'{home}-{season}']['win_history'][3], \
-    records[f'{away}-{season}']['win_history'][3], \
+    functions.past_wins(records[f'{home}-{season}']['win_history'],4), \
+    functions.past_wins(records[f'{away}-{season}']['win_history'],4), \
+    functions.past_wins(records[f'{home}-{season}']['win_history'],8), \
+    functions.past_wins(records[f'{away}-{season}']['win_history'],8), \
+    functions.past_wins(records[f'{home}-{season}']['win_history'],16), \
+    functions.past_wins(records[f'{away}-{season}']['win_history'],16), \
     "End")
 
 
