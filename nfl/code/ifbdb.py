@@ -25,14 +25,14 @@ def extract_date(aString):
         return None
 
 
-def update_past_weeks(history, win):
+def update_past_weeks(history, val):
     length = len(history)
     h = history.copy()
-    h.insert(0, 1 if win else 0)
+    h.insert(0, val)
     return h[:length]
 
 
-def past_wins(history, weeks_past):
+def past_total(history, weeks_past):
     return functools.reduce(lambda a, x: a + x, history[:weeks_past + 1], 0)
 
 
@@ -40,15 +40,15 @@ class Test(unittest.TestCase):
 
     def test_past_weeks(self):
         h = [1, 0, 1, 0, 0, 1, 1, 0, 1]
-        self.assertEqual(1, past_wins(h, 0))
-        self.assertEqual(1, past_wins(h, 1))
-        self.assertEqual(2, past_wins(h, 2))
-        self.assertEqual(2, past_wins(h, 3))
-        self.assertEqual(2, past_wins(h, 4))
-        self.assertEqual(3, past_wins(h, 5))
-        self.assertEqual(4, past_wins(h, 6))
-        self.assertEqual(4, past_wins(h, 7))
-        self.assertEqual(5, past_wins(h, 8))
+        self.assertEqual(1, past_total(h, 0))
+        self.assertEqual(1, past_total(h, 1))
+        self.assertEqual(2, past_total(h, 2))
+        self.assertEqual(2, past_total(h, 3))
+        self.assertEqual(2, past_total(h, 4))
+        self.assertEqual(3, past_total(h, 5))
+        self.assertEqual(4, past_total(h, 6))
+        self.assertEqual(4, past_total(h, 7))
+        self.assertEqual(5, past_total(h, 8))
 
     def test_past_weeks_update(self):
         h = [1, 0, 1, 0, 0, 1, 1, 1, 0]
