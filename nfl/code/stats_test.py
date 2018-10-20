@@ -14,6 +14,7 @@ def mean_sub(arr, number):
 
 
 class Test(unittest.TestCase):
+
     def test_mean(self):
         self.assertEqual(2.0, mean(five))
         self.assertEqual(3.0, mean(seven))

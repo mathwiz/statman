@@ -43,22 +43,6 @@ def game_win(row):
         return (False, True)
 
 
-def add_game(team, season, week, win, loss, points, opp):
-    key = f'{team}-{season}'
-    if key not in records:
-        records[key] = {'wins': 0, 'losses': 0, 'ties': 0, \
-        'win_history': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
-        'allowed_history': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], \
-        'points_history': [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] \
-        } #todo: make this span seasons
-    records[key]['wins'] = records[key]['wins'] + (1 if win else 0)
-    records[key]['losses'] = records[key]['losses'] + (1 if loss else 0)
-    records[key]['ties'] = records[key]['ties'] + (0 if win or loss else 1)
-    records[key]['win_history'] = functions.update_past_weeks(records[key]['win_history'], 1 if win else 0)
-    records[key]['points_history'] = functions.update_past_weeks(records[key]['points_history'], points)
-    records[key]['allowed_history'] = functions.update_past_weeks(records[key]['allowed_history'], opp)
-
-
 def output_row(season, week, home, away, row):
     weeks_back = 5 if int(week) > 5 else int(week) - 1
     hist_len = weeks_back + 1
@@ -83,8 +67,8 @@ def process(file):
             if functions.is_int(row['score_home']) and functions.is_int(row['schedule_week']):
                 season, week, home, away = key_fields(row)
                 home_win, away_win = game_win(row)
-                add_game(home, season, week, home_win==True, away_win==True, int(row['score_home']), int(row['score_away']))
-                add_game(away, season, week, away_win==True, home_win==True, int(row['score_away']), int(row['score_home']))
+                functions.add_game(records, home, season, week, home_win==True, away_win==True, int(row['score_home']), int(row['score_away']))
+                functions.add_game(records, away, season, week, away_win==True, home_win==True, int(row['score_away']), int(row['score_home']))
                 output_row(season, week, home, away, row)
                 line_num += 1
     print("Processed", line_num, "lines")
