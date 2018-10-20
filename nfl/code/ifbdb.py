@@ -48,6 +48,7 @@ def past_mean(history, weeks_past):
 
 
 def past_median(history, weeks_past):
+    print(history[1:weeks_past])
     if len(history[1:weeks_past]) == 0:
         return 0.0
     return statistics.median(history[1:weeks_past])

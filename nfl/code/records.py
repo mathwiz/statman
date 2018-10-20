@@ -43,7 +43,7 @@ def game_win(row):
         return (False, True)
 
 
-def add_game(team, season, week, win, loss, points, allowed):
+def add_game(team, season, week, win, loss, points, opp):
     key = f'{team}-{season}'
     if key not in records:
         records[key] = {'wins': 0, 'losses': 0, 'ties': 0, \
@@ -56,11 +56,12 @@ def add_game(team, season, week, win, loss, points, allowed):
     records[key]['ties'] = records[key]['ties'] + (0 if win or loss else 1)
     records[key]['win_history'] = functions.update_past_weeks(records[key]['win_history'], 1 if win else 0)
     records[key]['points_history'] = functions.update_past_weeks(records[key]['points_history'], points)
-    records[key]['allowed_history'] = functions.update_past_weeks(records[key]['allowed_history'], allowed)
+    records[key]['allowed_history'] = functions.update_past_weeks(records[key]['allowed_history'], opp)
 
 
 def output_row(season, week, home, away, row):
-    hist_len = 6 if int(week) > 6 else int(week)
+    weeks_back = 5 if int(week) > 5 else int(week) - 1
+    hist_len = weeks_back + 1
     #todo: try trimmed mean
     print(season, week, home, away, \
     records[f'{home}-{season}']['wins'], \
