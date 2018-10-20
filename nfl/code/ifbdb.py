@@ -3,6 +3,10 @@ import datetime
 import functools
 import statistics
 
+
+nine = [0,1,2,3,4,5,6,7,8]
+
+
 def is_int(aString):
     try:
         int(aString)
@@ -38,7 +42,6 @@ def past_total(history, weeks_past):
 
 
 def past_mean(history, weeks_past):
-    print(history[1:weeks_past])
     if len(history[1:weeks_past]) == 0:
         return 0.0
     return statistics.mean(history[1:weeks_past])

@@ -65,8 +65,8 @@ def output_row(season, week, home, away, row):
     print(season, week, home, away, \
     records[f'{home}-{season}']['wins'], \
     records[f'{away}-{season}']['wins'], \
-    functions.past_total(records[f'{home}-{season}']['points_history'],hist_len), \
-    functions.past_total(records[f'{away}-{season}']['points_history'],hist_len), \
+    functions.past_total(records[f'{home}-{season}']['win_history'],hist_len), \
+    functions.past_total(records[f'{away}-{season}']['win_history'],hist_len), \
     functions.past_mean(records[f'{home}-{season}']['points_history'],hist_len), \
     functions.past_mean(records[f'{away}-{season}']['points_history'],hist_len), \
     functions.past_median(records[f'{home}-{season}']['points_history'],hist_len), \
