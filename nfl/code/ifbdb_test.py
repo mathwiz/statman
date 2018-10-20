@@ -28,21 +28,100 @@ records = {}
 def output_row(season, week, home, away, row):
     weeks_back = 5 if int(week) > 5 else int(week) - 1
     hist_len = weeks_back + 1
+    all_hist_len = int(week)
     #todo: try trimmed mean
-    print(season, week, home, away, \
+    print(week, home, away, \
     records[f'{home}-{season}']['wins'], \
-    records[f'{away}-{season}']['wins'], \
     functions.past_total(records[f'{home}-{season}']['win_history'],hist_len), \
-    functions.past_total(records[f'{away}-{season}']['win_history'],hist_len), \
+    functions.past_mean(records[f'{home}-{season}']['points_history'],all_hist_len), \
+    functions.past_mean(records[f'{away}-{season}']['points_history'],all_hist_len), \
     functions.past_mean(records[f'{home}-{season}']['points_history'],hist_len), \
     functions.past_mean(records[f'{away}-{season}']['points_history'],hist_len), \
     functions.past_median(records[f'{home}-{season}']['points_history'],hist_len), \
     functions.past_median(records[f'{away}-{season}']['points_history'],hist_len), \
+    functions.past_mean(records[f'{home}-{season}']['allowed_history'],hist_len), \
+    functions.past_mean(records[f'{away}-{season}']['allowed_history'],hist_len), \
+    functions.past_median(records[f'{home}-{season}']['allowed_history'],hist_len), \
+    functions.past_median(records[f'{away}-{season}']['allowed_history'],hist_len), \
     )
 
 
 class Test(unittest.TestCase):
-    def test_means(self):
+    def meanAssert(self, season, week, home, away):
+        game = int(week)
+        hhist = records[f'{home}-{season}']['points_history']
+        ahist = records[f'{away}-{season}']['points_history']
+        if game==1:
+            self.assertAlmostEqual(0.0, functions.past_mean(hhist,1), places=3)
+        elif game==2:
+            self.assertAlmostEqual(9.0, functions.past_mean(hhist,2), places=3)
+        elif game==3:
+            self.assertAlmostEqual(10.5, functions.past_mean(ahist,3), places=3)
+        elif game==4:
+            self.assertAlmostEqual(16, functions.past_mean(hhist,4), places=3)
+        elif game==5:
+            self.assertAlmostEqual(23.5, functions.past_mean(ahist,5), places=3)
+        elif game==7:
+            self.assertAlmostEqual(22, functions.past_mean(ahist,6), places=3)
+        elif game==8:
+            self.assertAlmostEqual(22.3333, functions.past_mean(hhist,7), places=3)
+        elif game==9:
+            self.assertAlmostEqual(25, functions.past_mean(hhist,8), places=3)
+        elif game==10:
+            self.assertAlmostEqual(23.625, functions.past_mean(ahist,9), places=3)
+        elif game==11:
+            self.assertAlmostEqual(23.4444, functions.past_mean(hhist,10), places=3)
+        elif game==12:
+            self.assertAlmostEqual(24.2, functions.past_mean(ahist,11), places=3)
+        elif game==13:
+            self.assertAlmostEqual(24.1818, functions.past_mean(hhist,12), places=3)
+        elif game==14:
+            self.assertAlmostEqual(24.1666, functions.past_mean(ahist,13), places=3)
+        elif game==15:
+            self.assertAlmostEqual(24.1538, functions.past_mean(hhist,14), places=3)
+        elif game==16:
+            self.assertAlmostEqual(22.9285, functions.past_mean(ahist,15), places=3)
+        elif game==17:
+            self.assertAlmostEqual(22.8, functions.past_mean(hhist,16), places=3)
+
+    def medianAssert(self, season, week, home, away):
+        game = int(week)
+        hhist = records[f'{home}-{season}']['points_history']
+        ahist = records[f'{away}-{season}']['points_history']
+        if game==1:
+            self.assertAlmostEqual(0.0, functions.past_median(hhist,1), places=3)
+        elif game==2:
+            self.assertAlmostEqual(9, functions.past_median(hhist,2), places=3)
+        elif game==3:
+            self.assertAlmostEqual(10.5, functions.past_median(ahist,3), places=3)
+        elif game==4:
+            self.assertAlmostEqual(12, functions.past_median(hhist,4), places=3)
+        elif game==5:
+            self.assertAlmostEqual(19.5, functions.past_median(ahist,5), places=3)
+        elif game==7:
+            self.assertAlmostEqual(16, functions.past_median(ahist,6), places=3)
+        elif game==8:
+            self.assertAlmostEqual(20, functions.past_median(hhist,7), places=3)
+        elif game==9:
+            self.assertAlmostEqual(24, functions.past_median(hhist,8), places=3)
+        elif game==10:
+            self.assertAlmostEqual(20, functions.past_median(ahist,9), places=3)
+        elif game==11:
+            self.assertAlmostEqual(22, functions.past_median(hhist,10), places=3)
+        elif game==12:
+            self.assertAlmostEqual(23, functions.past_median(ahist,11), places=3)
+        elif game==13:
+            self.assertAlmostEqual(24, functions.past_median(hhist,12), places=3)
+        elif game==14:
+            self.assertAlmostEqual(24, functions.past_median(ahist,13), places=3)
+        elif game==15:
+            self.assertAlmostEqual(24, functions.past_median(hhist,14), places=3)
+        elif game==16:
+            self.assertAlmostEqual(24, functions.past_median(ahist,15), places=3)
+        elif game==17:
+            self.assertAlmostEqual(24, functions.past_median(hhist,16), places=3)
+
+    def test_stats(self):
         reader = csv.DictReader(data1)
         for row in reader:
             if functions.is_int(row['score_home']) and functions.is_int(row['schedule_week']):
@@ -50,6 +129,8 @@ class Test(unittest.TestCase):
                 home_win, away_win = functions.game_win(row)
                 functions.add_game(records, home, season, week, home_win==True, away_win==True, int(row['score_home']), int(row['score_away']))
                 functions.add_game(records, away, season, week, away_win==True, home_win==True, int(row['score_away']), int(row['score_home']))
+                self.meanAssert(season, week, home, away)
+                self.medianAssert(season, week, home, away)
                 output_row(season, week, home, away, row)
 
     def test_past_weeks(self):
