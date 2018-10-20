@@ -1,6 +1,7 @@
 import unittest
 import datetime
 import functools
+import statistics
 
 def is_int(aString):
     try:
@@ -33,10 +34,25 @@ def update_past_weeks(history, val):
 
 
 def past_total(history, weeks_past):
-    return functools.reduce(lambda a, x: a + x, history[:weeks_past + 1], 0)
+    return functools.reduce(lambda a, x: a + x, history[1:weeks_past], 0)
+
+
+def past_mean(history, weeks_past):
+    print(history[1:weeks_past])
+    if len(history[1:weeks_past]) == 0:
+        return 0.0
+    return statistics.mean(history[1:weeks_past])
+
+
+def past_median(history, weeks_past):
+    if len(history[1:weeks_past]) == 0:
+        return 0.0
+    return statistics.median(history[1:weeks_past])
 
 
 class Test(unittest.TestCase):
+    def test_mean(self):
+        pass
 
     def test_past_weeks(self):
         h = [1, 0, 1, 0, 0, 1, 1, 0, 1]

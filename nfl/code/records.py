@@ -3,6 +3,8 @@ import csv
 import datetime
 import ifbdb as functions
 
+
+# embarrassing result turnaround
 records = {}
 
 def row_key(row):
@@ -58,16 +60,17 @@ def add_game(team, season, week, win, loss, points, allowed):
 
 
 def output_row(season, week, home, away, row):
-    hist_len = 5 #len(records[f'{home}-{season}']['win_history'])
+    hist_len = 6 if int(week) > 6 else int(week)
+    #todo: try trimmed mean
     print(season, week, home, away, \
     records[f'{home}-{season}']['wins'], \
     records[f'{away}-{season}']['wins'], \
-    functions.past_total(records[f'{home}-{season}']['win_history'],hist_len), \
-    functions.past_total(records[f'{away}-{season}']['win_history'],hist_len), \
-    functions.past_total(records[f'{home}-{season}']['points_history'],hist_len) / float(hist_len), \
-    functions.past_total(records[f'{away}-{season}']['points_history'],hist_len) / float(hist_len), \
-    functions.past_total(records[f'{home}-{season}']['allowed_history'],hist_len) / float(hist_len), \
-    functions.past_total(records[f'{away}-{season}']['allowed_history'],hist_len) / float(hist_len), \
+    functions.past_total(records[f'{home}-{season}']['points_history'],hist_len), \
+    functions.past_total(records[f'{away}-{season}']['points_history'],hist_len), \
+    functions.past_mean(records[f'{home}-{season}']['points_history'],hist_len), \
+    functions.past_mean(records[f'{away}-{season}']['points_history'],hist_len), \
+    functions.past_median(records[f'{home}-{season}']['points_history'],hist_len), \
+    functions.past_median(records[f'{away}-{season}']['points_history'],hist_len), \
     )
 
 
