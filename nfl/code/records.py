@@ -18,7 +18,7 @@ def output_header():
 
 
 def output_line(line):
-    if line[1] == '2017':
+    if line[1] == 2018:
         print(line)
     writer.writerow(line)
 

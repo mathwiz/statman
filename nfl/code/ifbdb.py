@@ -137,7 +137,12 @@ def over_under_diff(row):
 def over_under_result(row):
     diff = over_under_diff(row)
     if diff:
-        return 'Over' if diff > 0 else 'Under'
+        if diff == 0.0:
+            return 'Push'
+        elif diff > 0.0:
+            return 'Over'  
+        else: 
+            return 'Under'
     else:
         return None 
 
