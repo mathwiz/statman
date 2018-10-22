@@ -3,7 +3,7 @@ import re
 import sys
 import csv
 import datetime
-import ifbdb as functions
+import teams as t
 
 
 file = sys.argv[1]

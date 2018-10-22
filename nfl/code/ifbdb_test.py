@@ -48,6 +48,13 @@ def output_row(season, week, home, away, row):
 
 class Test(unittest.TestCase):
 
+    def test_spread(self):
+        reader = csv.DictReader(data1)
+        for row in reader:
+            if row['schedule_week'] == '2':
+                self.assertEqual(-13.5, functions.spread(row))
+
+
     def meanAssert(self, season, week, home, away):
         game = int(week)
         hhist = records[f'{home}-{season}']['points_history']

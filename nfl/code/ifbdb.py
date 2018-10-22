@@ -54,14 +54,6 @@ def key_fields(row):
     return (row['schedule_season'], row['schedule_week'], row['team_home'], row['team_away'])
 
 
-def row_key(row):
-    return f'{row["schedule_season"]}-{row["schedule_week"]}-{row["team_away"]}-{row["team_home"]}'
-
-
-def make_key(team, season, week):
-    return f'{team}-{season}-{week}'
-
-
 def home_winner(row):
     home = int(row['score_home'])
     away = int(row['score_away'])
@@ -76,14 +68,22 @@ def tie(row):
 
 def game_win(row):
     if tie(row):
-        print(row['team_home'], row['score_home'], row['team_away'], row['score_away'], "TIE!")
+        #print(row['team_home'], row['score_home'], row['team_away'], row['score_away'], "TIE!")
         return (None, None)
     elif home_winner(row):
-        print(row['team_home'], row['score_home'], row['team_away'], row['score_away'])
+        #print(row['team_home'], row['score_home'], row['team_away'], row['score_away'])
         return (True, False)
     else:
-        print(row['team_away'], row['score_away'], row['team_home'], row['score_home'])
+        #print(row['team_away'], row['score_away'], row['team_home'], row['score_home'])
         return (False, True)
+
+
+def spread(row):
+    key = 'spread_favorite'
+    if is_float(row[key]):
+        return float(row[key])
+    else:
+        return None
 
 
 def add_game(records, team, season, week, win, loss, points, opp):
