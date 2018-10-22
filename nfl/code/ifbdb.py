@@ -4,6 +4,11 @@ import functools
 import statistics
 import csv
 
+PLACES = 1
+
+def recency_span():
+    return 5
+
 def is_int(aString):
     try:
         int(aString)
@@ -41,13 +46,13 @@ def past_total(history, weeks_past):
 def past_mean(history, weeks_past):
     if len(history[1:weeks_past]) == 0:
         return 0.0
-    return statistics.mean(history[1:weeks_past])
+    return round(statistics.mean(history[1:weeks_past]), PLACES)
 
 
 def past_median(history, weeks_past):
     if len(history[1:weeks_past]) == 0:
         return 0.0
-    return statistics.median(history[1:weeks_past])
+    return round(statistics.median(history[1:weeks_past]), PLACES)
 
 
 def key_fields(row):
@@ -80,6 +85,14 @@ def game_win(row):
 
 def spread(row):
     key = 'spread_favorite'
+    if is_float(row[key]):
+        return float(row[key])
+    else:
+        return None
+
+
+def over_under(row):
+    key = 'over_under_line'
     if is_float(row[key]):
         return float(row[key])
     else:

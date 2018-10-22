@@ -2,6 +2,7 @@ import sys
 import csv
 import datetime
 import ifbdb as functions
+import teams as t
 
 outfile = 'a.csv' if len(sys.argv) < 3 else sys.argv[2]
 output = open(outfile, mode='w')
@@ -11,11 +12,23 @@ writer = csv.writer(output, lineterminator='\n', quoting=csv.QUOTE_NONNUMERIC)
 records = {}
 teams = {}
 
+
+def output_header():
+    writer.writerow(make_header())
+
+
+def output_line(line):
+    if line[1] == '2017':
+        print(line)
+    writer.writerow(line)
+
+
 def make_header():
     row = [
             'date', 'season', 'week',
             'home_team', 'home_wins' 'away_team', 'away_wins' 
             'favorite', 'underdog', 'spread',
+            'over_under_line',
             'home_recent_wins', 'away_recent_wins',  
             'home_recent_scoring', 'away_recent_scoring',  
             'home_recent_allowed', 'away_recent_allowed',  
@@ -23,30 +36,23 @@ def make_header():
     return row
 
 
-def output_header():
-    writer.writerow(make_header())
-
-
-def output_line(line):
-    if line[0] == '2017':
-        print(line)
-    writer.writerow(line)
-
-
 def create_row(season, week, home, away, row):
-    weeks_back = 5 if int(week) > 5 else int(week) - 1
+    span = functions.recency_span()
+    weeks_back = span if int(week) > span else int(week) - 1
     hist_len = weeks_back + 1
     row = [
-    row['schedule_date'], season, week, \
-    home, records[f'{home}-{season}']['wins'], \
-    away, records[f'{away}-{season}']['wins'], \
-    row['team_favorite_id'], row['team_favorite_id'], functions.spread(row), \
-    functions.past_total(records[f'{home}-{season}']['win_history'],hist_len), \
-    functions.past_total(records[f'{away}-{season}']['win_history'],hist_len), \
-    functions.past_mean(records[f'{home}-{season}']['points_history'],hist_len), \
-    functions.past_mean(records[f'{away}-{season}']['points_history'],hist_len), \
-    functions.past_mean(records[f'{home}-{season}']['allowed_history'],hist_len), \
-    functions.past_mean(records[f'{away}-{season}']['allowed_history'],hist_len), \
+        row['schedule_date'], season, week, \
+        home, records[f'{home}-{season}']['wins'], \
+        away, records[f'{away}-{season}']['wins'], \
+        t.team_favorite(row), t.team_underdog(row), \
+        functions.spread(row), \
+        functions.over_under(row), \
+        functions.past_total(records[f'{home}-{season}']['win_history'],hist_len), \
+        functions.past_total(records[f'{away}-{season}']['win_history'],hist_len), \
+        functions.past_mean(records[f'{home}-{season}']['points_history'],hist_len), \
+        functions.past_mean(records[f'{away}-{season}']['points_history'],hist_len), \
+        functions.past_mean(records[f'{home}-{season}']['allowed_history'],hist_len), \
+        functions.past_mean(records[f'{away}-{season}']['allowed_history'],hist_len), \
     ]
     return row
 
@@ -65,6 +71,7 @@ def process(file):
                 output_line(create_row(season, week, home, away, row))
                 line_num += 1
     print("Processed", line_num, "lines")
+    output.close()
 
 
 if __name__ == '__main__':

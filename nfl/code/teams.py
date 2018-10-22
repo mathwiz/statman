@@ -6,6 +6,14 @@ import datetime
 import ifbdb as functions
 
 
+def team_favorite(row):
+    return row['team_favorite_id']
+
+
+def team_underdog(row):
+    return row['team_away']
+
+
 file = sys.argv[1]
 line_num = 0
 
