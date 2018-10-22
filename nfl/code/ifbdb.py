@@ -30,6 +30,10 @@ def is_float(aString):
         return False
 
 
+def record_key(home, season):
+    return f'{home}-{season}'
+
+
 def extract_date(aString):
     try:
         return datetime.datetime.strptime(aString, '%m/%d/%Y')
@@ -58,6 +62,12 @@ def past_median(history, weeks_past):
     if len(history[1:weeks_past]) == 0:
         return 0.0
     return round(statistics.median(history[1:weeks_past]), PLACES)
+
+
+def previous_season_wins(team, season, records):
+    key = record_key(team, int(season)-1)
+    prev_season = records.get(key)
+    return prev_season['wins'] if prev_season else  None
 
 
 def key_fields(row):
@@ -90,8 +100,11 @@ def game_win(row):
 
 def spread(row):
     key = 'spread_favorite'
-    if is_float(row[key]):
-        return float(row[key])
+    spread = row[key]
+    if spread == 'PICK':
+        return 0.0
+    elif is_float(row[key]):
+        return float(spread)
     else:
         return None
 
