@@ -12,7 +12,6 @@ writer = csv.writer(output, lineterminator='\n', quoting=csv.QUOTE_NONNUMERIC)
 records = {}
 teams = {}
 
-
 def output_header():
     writer.writerow(make_header())
 
@@ -89,27 +88,16 @@ def create_row(season, week, home, away, row):
     return row
 
 
-def load_from_reader(reader):
-    teams = {}
-    for row in reader:
-        id = row['team_id']
-        if id in teams:
-            teams[id].append(row['team_name'])
-        else:
-            teams[id] = [row['team_name']]
-    return teams
-
-
-def load_teams(file):
+def load_teams(file, dict):
     with open(file) as f:
         reader = csv.DictReader(f)
-        teams = t.load_from_reader(reader)
-    print(teams)
+        t.load_from_reader(reader, dict)
 
 
 def process(file, teamsfile):
     line_num = 0
-    load_teams(teamsfile)
+    load_teams(teamsfile, teams)
+    print(teams)
     output_header()
     with open(file) as f:
         reader = csv.DictReader(f)

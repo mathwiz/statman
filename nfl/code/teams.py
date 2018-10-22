@@ -1,9 +1,4 @@
-import sys
-import re
-import sys
 import csv
-import datetime
-import ifbdb as functions
 
 
 def team_favorite(row):
@@ -11,10 +6,10 @@ def team_favorite(row):
 
 
 def team_underdog(row):
-    return row['team_away']
+    return row['team_favorite_id']
 
-def load_from_reader(reader):
-    teams = {}
+
+def load_from_reader(reader, teams):
     for row in reader:
         id = row['team_id']
         if id in teams:
