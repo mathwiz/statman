@@ -4,7 +4,7 @@ import datetime
 import ifbdb as functions
 import teams as t
 
-outfile = 'a.csv' if len(sys.argv) < 3 else sys.argv[2]
+outfile = 'a.csv' if len(sys.argv) < 4 else sys.argv[3]
 output = open(outfile, mode='w')
 writer = csv.writer(output, lineterminator='\n', quoting=csv.QUOTE_NONNUMERIC)
 
@@ -89,8 +89,27 @@ def create_row(season, week, home, away, row):
     return row
 
 
-def process(file):
+def load_from_reader(reader):
+    teams = {}
+    for row in reader:
+        id = row['team_id']
+        if id in teams:
+            teams[id].append(row['team_name'])
+        else:
+            teams[id] = [row['team_name']]
+    return teams
+
+
+def load_teams(file):
+    with open(file) as f:
+        reader = csv.DictReader(f)
+        teams = t.load_from_reader(reader)
+    print(teams)
+
+
+def process(file, teamsfile):
     line_num = 0
+    load_teams(teamsfile)
     output_header()
     with open(file) as f:
         reader = csv.DictReader(f)
@@ -109,4 +128,4 @@ def process(file):
 
 
 if __name__ == '__main__':
-    process(sys.argv[1])
+    process(sys.argv[1], sys.argv[2])

@@ -13,13 +13,12 @@ def team_favorite(row):
 def team_underdog(row):
     return row['team_away']
 
-
-file = sys.argv[1]
-line_num = 0
-
-with open(file) as f:
-    for line in f:
-        line_num += 1
-        if line_num == 1 or re.search(r'"END GAME"',line):
-            print(line.rstrip())
-
+def load_from_reader(reader):
+    teams = {}
+    for row in reader:
+        id = row['team_id']
+        if id in teams:
+            teams[id].append(row['team_name'])
+        else:
+            teams[id] = [row['team_name']]
+    return teams
