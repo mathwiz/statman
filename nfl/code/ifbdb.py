@@ -124,6 +124,24 @@ def to_score(aString):
         return None
 
 
+def over_under_diff(row):
+    line = row['over_under_line']
+    score_home = row['score_home']
+    score_away = row['score_away']
+    if line and score_away and score_home:
+        return float(score_away) + float(score_home) - float(line)
+    else:
+        return None 
+
+
+def over_under_result(row):
+    diff = over_under_diff(row)
+    if diff:
+        return 'Over' if diff > 0 else 'Under'
+    else:
+        return None 
+
+
 def add_game(records, team, season, week, win, loss, points, opp):
     key = f'{team}-{season}'
     if key not in records:

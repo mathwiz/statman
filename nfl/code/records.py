@@ -28,14 +28,21 @@ def make_header():
             'date', 'season', 'week',
             'home_team', 'home_wins' 'away_team', 'away_wins' 
             'home_last_season_wins', 'away_last_season_wins',
-            'favorite', 'underdog', 'spread',
+            'favorite', 'underdog', 
+            'spread',
+            'home_fav',
             'over_under_line',
             'home_recent_wins', 'away_recent_wins',  
             'home_recent_scoring', 'away_recent_scoring',  
             'home_recent_allowed', 'away_recent_allowed',  
             'neutral',
             'playoff'
-            'score_home', 'score_away'
+            'score_home', 'score_away',
+            'home_win', 
+            'fav_win',
+            'spread_diff',
+            'over_under_result', 
+            'over_under_diff'
           ]
     return row
 
@@ -47,27 +54,37 @@ def create_row(season, week, home, away, row):
     hist_len = weeks_back + 1
     home_key = functions.record_key(home, season)
     away_key = functions.record_key(away, season)
+    score_home = functions.to_score(row['score_home'])
+    score_away = functions.to_score(row['score_away'])
+    spread = functions.spread(row)
+    over_under = functions.over_under(row)
     row = [
-        row['schedule_date'], int(season), int(week), \
-        home, \
-        functions.past_total(records[home_key]['win_history'], all_weeks_back), \
-        away, \
-        functions.past_total(records[away_key]['win_history'], all_weeks_back), \
-        functions.previous_season_wins(home, season, records), \
-        functions.previous_season_wins(away, season, records), \
-        t.team_favorite(row), t.team_underdog(row), \
-        functions.spread(row), \
-        functions.over_under(row), \
-        functions.past_total(records[home_key]['win_history'],hist_len), \
-        functions.past_total(records[away_key]['win_history'],hist_len), \
-        functions.past_mean(records[home_key]['points_history'],hist_len), \
-        functions.past_mean(records[away_key]['points_history'],hist_len), \
-        functions.past_mean(records[home_key]['allowed_history'],hist_len), \
-        functions.past_mean(records[away_key]['allowed_history'],hist_len), \
-        functions.to_bool(row['stadium_neutral']), \
-        functions.to_bool(row['schedule_playoff']), \
-        functions.to_score(row['score_home']), \
-        functions.to_score(row['score_away']), \
+        row['schedule_date'], int(season), int(week), 
+        home, 
+        functions.past_total(records[home_key]['win_history'], all_weeks_back), 
+        away, 
+        functions.past_total(records[away_key]['win_history'], all_weeks_back), 
+        functions.previous_season_wins(home, season, records), 
+        functions.previous_season_wins(away, season, records), 
+        t.team_favorite(row), t.team_underdog(row), 
+        spread, 
+        None,
+        over_under, 
+        functions.past_total(records[home_key]['win_history'],hist_len), 
+        functions.past_total(records[away_key]['win_history'],hist_len), 
+        functions.past_mean(records[home_key]['points_history'],hist_len), 
+        functions.past_mean(records[away_key]['points_history'],hist_len), 
+        functions.past_mean(records[home_key]['allowed_history'],hist_len), 
+        functions.past_mean(records[away_key]['allowed_history'],hist_len), 
+        functions.to_bool(row['stadium_neutral']), 
+        functions.to_bool(row['schedule_playoff']), 
+        score_home, 
+        score_away, 
+        score_home > score_away, 
+        None, 
+        None,
+        functions.over_under_result(row),
+        functions.over_under_diff(row),
     ]
     return row
 
