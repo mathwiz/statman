@@ -32,6 +32,8 @@ def make_header():
             'home_recent_wins', 'away_recent_wins',  
             'home_recent_scoring', 'away_recent_scoring',  
             'home_recent_allowed', 'away_recent_allowed',  
+            'neutral',
+            'score_home', 'score_away'
           ]
     return row
 
@@ -39,11 +41,14 @@ def make_header():
 def create_row(season, week, home, away, row):
     span = functions.recency_span()
     weeks_back = span if int(week) > span else int(week) - 1
+    all_weeks_back = int(week) - 1
     hist_len = weeks_back + 1
     row = [
         row['schedule_date'], season, week, \
-        home, records[f'{home}-{season}']['wins'], \
-        away, records[f'{away}-{season}']['wins'], \
+        home, \
+        functions.past_total(records[f'{home}-{season}']['win_history'], all_weeks_back), \
+        away, \
+        functions.past_total(records[f'{away}-{season}']['win_history'], all_weeks_back), \
         t.team_favorite(row), t.team_underdog(row), \
         functions.spread(row), \
         functions.over_under(row), \
@@ -53,6 +58,9 @@ def create_row(season, week, home, away, row):
         functions.past_mean(records[f'{away}-{season}']['points_history'],hist_len), \
         functions.past_mean(records[f'{home}-{season}']['allowed_history'],hist_len), \
         functions.past_mean(records[f'{away}-{season}']['allowed_history'],hist_len), \
+        functions.to_bool(row['stadium_neutral']), \
+        functions.to_score(row['score_home']), \
+        functions.to_score(row['score_away']), \
     ]
     return row
 

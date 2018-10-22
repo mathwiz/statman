@@ -4,10 +4,15 @@ import functools
 import statistics
 import csv
 
-PLACES = 1
+PLACES = 3
 
 def recency_span():
     return 5
+
+
+def to_bool(aString):
+    return aString == "TRUE"
+
 
 def is_int(aString):
     try:
@@ -95,6 +100,13 @@ def over_under(row):
     key = 'over_under_line'
     if is_float(row[key]):
         return float(row[key])
+    else:
+        return None
+
+
+def to_score(aString):
+    if is_int(aString):
+        return int(aString)
     else:
         return None
 

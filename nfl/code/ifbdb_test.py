@@ -55,6 +55,44 @@ class Test(unittest.TestCase):
                 self.assertEqual(-13.5, functions.spread(row))
 
 
+    def winsAssert(self, season, week, home, away):
+        game = int(week)
+        hhist = records[f'{home}-{season}']['win_history']
+        ahist = records[f'{away}-{season}']['win_history']
+        if game==1:
+            self.assertEqual(0, functions.past_total(hhist,1))
+        elif game==2:
+            self.assertEqual(0, functions.past_total(hhist,2))
+        elif game==3:
+            self.assertEqual(1, functions.past_total(ahist,3))
+        elif game==4:
+            self.assertEqual(1, functions.past_total(hhist,4))
+        elif game==5:
+            self.assertEqual(2, functions.past_total(ahist,5))
+        elif game==7:
+            self.assertEqual(3, functions.past_total(ahist,6))
+        elif game==8:
+            self.assertEqual(4, functions.past_total(hhist,7))
+        elif game==9:
+            self.assertEqual(5, functions.past_total(hhist,8))
+        elif game==10:
+            self.assertEqual(5, functions.past_total(ahist,9))
+        elif game==11:
+            self.assertEqual(6, functions.past_total(hhist,10))
+        elif game==12:
+            self.assertEqual(6, functions.past_total(ahist,11))
+        elif game==13:
+            self.assertEqual(7, functions.past_total(hhist,12))
+        elif game==14:
+            self.assertEqual(8, functions.past_total(ahist,13))
+        elif game==15:
+            self.assertEqual(8, functions.past_total(hhist,14))
+        elif game==16:
+            self.assertEqual(8, functions.past_total(ahist,15))
+        elif game==17:
+            self.assertEqual(9, functions.past_total(hhist,16))
+
+
     def meanAssert(self, season, week, home, away):
         game = int(week)
         hhist = records[f'{home}-{season}']['points_history']
@@ -257,7 +295,7 @@ class Test(unittest.TestCase):
         elif game==3:
             self.assertAlmostEqual(13, functions.past_mean(ahist,3), places=3)
         elif game==4:
-            self.assertAlmostEqual(19.6666, functions.past_mean(hhist,4), places=3)
+            self.assertAlmostEqual(19.667, functions.past_mean(hhist,4), places=3)
         elif game==5:
             self.assertAlmostEqual(19.25, functions.past_mean(ahist,5), places=3)
         elif game==7:
@@ -376,6 +414,7 @@ class Test(unittest.TestCase):
                 self.againstRecentMeanAssert(season, week, home, away)
                 self.againstMedianAssert(season, week, home, away)
                 self.againstRecentMedianAssert(season, week, home, away)
+                self.winsAssert(season, week, home, away)
                 output_row(season, week, home, away, row)
 
 
