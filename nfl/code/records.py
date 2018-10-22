@@ -48,7 +48,7 @@ def create_row(season, week, home, away, row):
     home_key = functions.record_key(home, season)
     away_key = functions.record_key(away, season)
     row = [
-        row['schedule_date'], season, week, \
+        row['schedule_date'], int(season), int(week), \
         home, \
         functions.past_total(records[home_key]['win_history'], all_weeks_back), \
         away, \
@@ -80,6 +80,7 @@ def process(file):
         for row in reader:
             season, week, home, away = functions.key_fields(row)
             if functions.is_int(row['score_home']) \
+                and int(season) > 1977 \
                 and functions.is_int(row['schedule_week']):
                 home_win, away_win = functions.game_win(row)
                 functions.add_game(records, home, season, week, home_win==True, away_win==True, int(row['score_home']), int(row['score_away']))
