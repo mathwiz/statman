@@ -146,6 +146,11 @@ def spread_diff(row, home_fav):
         return None 
 
 
+def cover(row, home_fav):
+    diff = spread_diff(row, home_fav) 
+    return diff > 0.0 if diff else None
+
+
 def over_under_diff(row):
     line = row['over_under_line']
     score_home = row['score_home']

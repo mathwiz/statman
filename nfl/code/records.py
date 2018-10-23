@@ -39,6 +39,7 @@ def make_header():
             'score_home', 'score_away',
             'home_win', 
             'fav_win',
+            'cover',
             'spread_diff',
             'over_under_result', 
             'over_under_diff'
@@ -85,7 +86,8 @@ def create_row(season, week, home, away, row):
         score_home, 
         score_away, 
         home_winner, 
-        functions.favorite_winner(row, favorite), 
+        functions.favorite_winner(row, favorite),
+        functions.cover(row, home_fav), 
         functions.spread_diff(row, home_fav),
         functions.over_under_result(row),
         functions.over_under_diff(row),
