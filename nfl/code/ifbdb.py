@@ -58,6 +58,12 @@ def past_mean(history, weeks_past):
     return round(statistics.mean(history[1:weeks_past]), PLACES)
 
 
+def past_stdev(history, weeks_past):
+    if len(history[1:weeks_past]) < 2:
+        return None
+    return round(statistics.stdev(history[1:weeks_past]), PLACES)
+
+
 def past_median(history, weeks_past):
     if len(history[1:weeks_past]) == 0:
         return 0.0

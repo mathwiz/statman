@@ -93,6 +93,44 @@ class Test(unittest.TestCase):
             self.assertEqual(9, functions.past_total(hhist,16))
 
 
+    def stdevAssert(self, season, week, home, away):
+        game = int(week)
+        hhist = records[f'{home}-{season}']['points_history']
+        ahist = records[f'{away}-{season}']['points_history']
+        if game==1:
+            self.assertTrue(None == functions.past_stdev(hhist,1))
+        elif game==2:
+            self.assertTrue(None == functions.past_stdev(hhist,2))
+        elif game==3:
+            self.assertAlmostEqual(2.121, functions.past_stdev(ahist,3), places=1)
+        elif game==4:
+            self.assertAlmostEqual(9.644, functions.past_stdev(hhist,4), places=1)
+        elif game==5:
+            self.assertAlmostEqual(16.934, functions.past_stdev(ahist,5), places=1)
+        elif game==7:
+            self.assertAlmostEqual(15.0499, functions.past_stdev(ahist,6), places=1)
+        elif game==8:
+            self.assertAlmostEqual(13.486, functions.past_stdev(hhist,7), places=1)
+        elif game==9:
+            self.assertAlmostEqual(14.189, functions.past_stdev(hhist,8), places=1)
+        elif game==10:
+            self.assertAlmostEqual(13.7, functions.past_stdev(ahist,9), places=1)
+        elif game==11:
+            self.assertAlmostEqual(12.827, functions.past_stdev(hhist,10), places=1)
+        elif game==12:
+            self.assertAlmostEqual(12.327, functions.past_stdev(ahist,11), places=1)
+        elif game==13:
+            self.assertAlmostEqual(11.695, functions.past_stdev(hhist,12), places=1)
+        elif game==14:
+            self.assertAlmostEqual(11.15, functions.past_stdev(ahist,13), places=1)
+        elif game==15:
+            self.assertAlmostEqual(10.676, functions.past_stdev(hhist,14), places=1)
+        elif game==16:
+            self.assertAlmostEqual(11.235, functions.past_stdev(ahist,15), places=1)
+        elif game==17:
+            self.assertAlmostEqual(10.838, functions.past_stdev(hhist,16), places=1)
+
+
     def meanAssert(self, season, week, home, away):
         game = int(week)
         hhist = records[f'{home}-{season}']['points_history']
@@ -415,6 +453,7 @@ class Test(unittest.TestCase):
                 self.againstMedianAssert(season, week, home, away)
                 self.againstRecentMedianAssert(season, week, home, away)
                 self.winsAssert(season, week, home, away)
+                self.stdevAssert(season, week, home, away)
                 output_row(season, week, home, away, row)
 
 

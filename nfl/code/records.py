@@ -26,6 +26,7 @@ def make_header():
     row = [
             'date', 
             'season', 'week',
+            'stadium',
             'home_team', 'home_wins', 'away_team', 'away_wins',
             'home_last_season_wins', 'away_last_season_wins',
             'favorite', 'underdog', 
@@ -34,7 +35,9 @@ def make_header():
             'over_under_line',
             'home_recent_wins', 'away_recent_wins',  
             'home_recent_scoring', 'away_recent_scoring',  
+            'home_scoring_dev', 'away_scoring_dev',  
             'home_recent_allowed', 'away_recent_allowed',  
+            'home__allowed_dev', 'away_allowed_dev',  
             'neutral',
             'playoff',
             'score_home', 'score_away',
@@ -66,6 +69,7 @@ def create_row(season, week, home, away, row):
     row = [
         row['schedule_date'], 
         int(season), int(week), 
+        row['stadium'],
         home, 
         functions.past_total(records[home_key]['win_history'], all_weeks_back), 
         away, 
@@ -81,8 +85,12 @@ def create_row(season, week, home, away, row):
         functions.past_total(records[away_key]['win_history'],hist_len), 
         functions.past_mean(records[home_key]['points_history'],hist_len), 
         functions.past_mean(records[away_key]['points_history'],hist_len), 
+        functions.past_stdev(records[home_key]['points_history'],all_weeks_back), 
+        functions.past_stdev(records[away_key]['points_history'],all_weeks_back), 
         functions.past_mean(records[home_key]['allowed_history'],hist_len), 
         functions.past_mean(records[away_key]['allowed_history'],hist_len), 
+        functions.past_stdev(records[home_key]['allowed_history'],all_weeks_back), 
+        functions.past_stdev(records[away_key]['allowed_history'],all_weeks_back), 
         functions.to_bool(row['stadium_neutral']), 
         functions.to_bool(row['schedule_playoff']), 
         score_home, 
@@ -113,7 +121,7 @@ def process(file, teamsfile):
         for row in reader:
             season, week, home, away = functions.key_fields(row)
             if functions.is_int(row['score_home']) \
-                and int(season) > 1977 \
+                and int(season) > 1978 \
                 and functions.is_int(row['schedule_week']):
                 home_win, away_win = functions.game_win(row)
                 functions.add_game(records, home, season, week, home_win==True, away_win==True, int(row['score_home']), int(row['score_away']))
