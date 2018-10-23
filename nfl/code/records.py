@@ -37,7 +37,7 @@ def make_header():
             'home_recent_scoring', 'away_recent_scoring',  
             'home_scoring_dev', 'away_scoring_dev',  
             'home_recent_allowed', 'away_recent_allowed',  
-            'home__allowed_dev', 'away_allowed_dev',  
+            'home_allowed_dev', 'away_allowed_dev',  
             'neutral',
             'playoff',
             'score_home', 'score_away',
