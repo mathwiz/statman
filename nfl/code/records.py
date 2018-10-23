@@ -57,6 +57,10 @@ def create_row(season, week, home, away, row):
     score_away = functions.to_score(row['score_away'])
     spread = functions.spread(row)
     over_under = functions.over_under(row)
+    home_winner = functions.home_winner(row)
+    favorite = t.team_favorite(row, teams)
+    underdog = t.team_underdog(row, teams)
+    home_fav = favorite == home
     row = [
         row['schedule_date'], int(season), int(week), 
         home, 
@@ -65,9 +69,10 @@ def create_row(season, week, home, away, row):
         functions.past_total(records[away_key]['win_history'], all_weeks_back), 
         functions.previous_season_wins(home, season, records), 
         functions.previous_season_wins(away, season, records), 
-        t.team_favorite(row, teams), t.team_underdog(row, teams), 
+        favorite, 
+        underdog, 
         spread, 
-        None,
+        home_fav,
         over_under, 
         functions.past_total(records[home_key]['win_history'],hist_len), 
         functions.past_total(records[away_key]['win_history'],hist_len), 
@@ -79,9 +84,9 @@ def create_row(season, week, home, away, row):
         functions.to_bool(row['schedule_playoff']), 
         score_home, 
         score_away, 
-        functions.home_winner(row), 
-        None, 
-        None,
+        home_winner, 
+        functions.favorite_winner(row, favorite), 
+        functions.spread_diff(row, home_fav),
         functions.over_under_result(row),
         functions.over_under_diff(row),
     ]

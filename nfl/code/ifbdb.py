@@ -78,8 +78,17 @@ def home_winner(row):
     home = int(row['score_home'])
     away = int(row['score_away'])
     result = home > away
-    #print(home, away, result)
     return result
+
+
+def favorite_winner(row, favorite):
+    home = int(row['score_home'])
+    away = int(row['score_away'])
+    if home > away:
+        return favorite == row['team_home']
+    elif away > home:
+        return favorite == row['team_away']
+    return False
 
 
 def tie(row):
@@ -122,6 +131,19 @@ def to_score(aString):
         return int(aString)
     else:
         return None
+
+
+def spread_diff(row, home_fav):
+    line = spread(row)
+    score_home = row['score_home']
+    score_away = row['score_away']
+    if line and score_away and score_home:
+        if home_fav:
+            return float(score_home) + float(line) - float(score_away)
+        else:
+            return float(score_away) + float(line) - float(score_home)
+    else:
+        return None 
 
 
 def over_under_diff(row):

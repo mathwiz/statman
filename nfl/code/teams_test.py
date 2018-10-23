@@ -37,7 +37,7 @@ class Test(unittest.TestCase):
         reader = csv.DictReader(data1)
         for row in reader:
             if row['schedule_week'] == '1':
-                self.assertEqual("Green Bay Packers", t.team_favorite(row))
+                self.assertEqual("Green Bay Packers", t.team_favorite(row, teams))
 
 
 if __name__ == '__main__':
