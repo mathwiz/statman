@@ -148,7 +148,7 @@ def spread_diff(row, home_fav):
 
 def cover(row, home_fav):
     diff = spread_diff(row, home_fav) 
-    return diff > 0.0 if diff else None
+    return diff > 0.0 if diff != None else None
 
 
 def over_under_diff(row):

@@ -6,7 +6,7 @@ import teams as t
 
 outfile = 'a.csv' if len(sys.argv) < 4 else sys.argv[3]
 output = open(outfile, mode='w')
-writer = csv.writer(output, lineterminator='\n', quoting=csv.QUOTE_NONNUMERIC)
+writer = csv.writer(output, lineterminator='\n', quoting=csv.QUOTE_MINIMAL)
 
 # embarrassing result turnaround
 records = {}
@@ -24,8 +24,9 @@ def output_line(line):
 
 def make_header():
     row = [
-            'date', 'season', 'week',
-            'home_team', 'home_wins' 'away_team', 'away_wins' 
+            'date', 
+            'season', 'week',
+            'home_team', 'home_wins', 'away_team', 'away_wins',
             'home_last_season_wins', 'away_last_season_wins',
             'favorite', 'underdog', 
             'spread',
@@ -63,7 +64,8 @@ def create_row(season, week, home, away, row):
     underdog = t.team_underdog(row, teams)
     home_fav = favorite == home
     row = [
-        row['schedule_date'], int(season), int(week), 
+        row['schedule_date'], 
+        int(season), int(week), 
         home, 
         functions.past_total(records[home_key]['win_history'], all_weeks_back), 
         away, 
