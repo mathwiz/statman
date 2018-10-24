@@ -17,9 +17,8 @@ def output_header():
 
 
 def output_line(line):
-    if line[1] == 2018:
-        print(line)
-    writer.writerow(line)
+    if line[14]:
+        writer.writerow(line)
 
 
 def make_header():
@@ -121,7 +120,7 @@ def process(file, teamsfile):
         for row in reader:
             season, week, home, away = functions.key_fields(row)
             if functions.is_int(row['score_home']) \
-                and int(season) > 1978 \
+                and int(season) > 1977 \
                 and functions.is_int(row['schedule_week']):
                 home_win, away_win = functions.game_win(row)
                 functions.add_game(records, home, season, week, home_win==True, away_win==True, int(row['score_home']), int(row['score_away']))
