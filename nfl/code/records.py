@@ -17,7 +17,7 @@ def output_header():
 
 
 def output_line(line):
-    if line[14]:
+    if line[12]:
         writer.writerow(line)
 
 
@@ -26,7 +26,7 @@ def make_header():
             'date', 
             'season', 'week',
             'stadium',
-            'home_team', 'home_wins', 'away_team', 'away_wins',
+            'home_team', 'away_team',
             'home_last_season_wins', 'away_last_season_wins',
             'favorite', 'underdog', 
             'spread',
@@ -70,9 +70,9 @@ def create_row(season, week, home, away, row):
         int(season), int(week), 
         row['stadium'],
         home, 
-        functions.past_total(records[home_key]['win_history'], all_weeks_back), 
+        # functions.past_total(records[home_key]['win_history'], all_weeks_back), 
         away, 
-        functions.past_total(records[away_key]['win_history'], all_weeks_back), 
+        # functions.past_total(records[away_key]['win_history'], all_weeks_back), 
         functions.previous_season_wins(home, season, records), 
         functions.previous_season_wins(away, season, records), 
         favorite, 
