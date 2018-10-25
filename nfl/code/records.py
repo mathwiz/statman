@@ -66,7 +66,7 @@ def create_row(season, week, home, away, row):
     underdog = t.team_underdog(row, teams)
     home_fav = favorite == home
     row = [
-        row['schedule_date'], 
+        functions.extract_date(row['schedule_date']).date(), 
         int(season), int(week), 
         row['stadium'],
         home, 

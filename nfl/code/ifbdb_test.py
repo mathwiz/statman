@@ -21,6 +21,14 @@ data1 = [
 '12/24/2017,2017,16,Dallas Cowboys,Seattle Seahawks,AT&T Stadium,DAL,-4.5,47,DOME,72,0,,12,21,FALSE,FALSE',
 '12/31/2017,2017,17,Seattle Seahawks,Arizona Cardinals,CenturyLink Field,SEA,-8,38,,40,7,,24,26,FALSE,FALSE'
 ]
+data2 = [
+'schedule_date,schedule_season,schedule_week,team_home,team_away,stadium,team_favorite_id,spread_favorite,over_under_line,weather_detail,weather_temperature,weather_wind_mph,weather_humidity,score_home,score_away,stadium_neutral,schedule_playoff',
+'09/10/2017,2017,1,Green Bay Packers,Seattle Seahawks,Lambeau Field,GB,-3,26.0,,69,8,,17,9,FALSE,FALSE',
+'09/17/2017,2017,2,Seattle Seahawks,San Francisco 49ers,CenturyLink Field,SEA,-13.5,42.5,,65,11,,12,9,FALSE,FALSE',
+'09/24/2017,2017,3,Tennessee Titans,Seattle Seahawks,LP Stadium,TEN,-3,42,,89,4,,33,27,FALSE,FALSE',
+'10/01/2017,2017,4,Seattle Seahawks,Indianapolis Colts,CenturyLink Field,SEA,-13,41.5,,52,3,,46,18,FALSE,FALSE',
+'10/14/1979,1979,7,Kansas City Chiefs,Denver Broncos,Arrowhead Stadium,DEN,-1,34,,47,12,43,10,24,FALSE,FALSE'
+]
 
 records = {}
 
@@ -47,6 +55,32 @@ def output_row(season, week, home, away, row):
 
 
 class Test(unittest.TestCase):
+
+    def test_over_under(self):
+        reader = csv.DictReader(data2)
+        for row in reader:
+            if row['schedule_week'] == '1':
+                self.assertEqual("Push", functions.over_under_result(row))
+            if row['schedule_week'] == '2':
+                self.assertEqual("Under", functions.over_under_result(row))
+            if row['schedule_week'] == '3':
+                    self.assertEqual("Over", functions.over_under_result(row))
+            if row['schedule_week'] == '7':
+                    self.assertEqual("Push", functions.over_under_result(row))
+
+
+    def test_spread(self):
+        reader = csv.DictReader(data2)
+        for row in reader:
+            if row['schedule_week'] == '1':
+                self.assertEqual("Cover", functions.cover(row, True))
+            if row['schedule_week'] == '2':
+                self.assertEqual("Not Cover", functions.cover(row, True))
+            if row['schedule_week'] == '3':
+                    self.assertEqual("Cover", functions.cover(row, True))
+            if row['schedule_week'] == '7':
+                    self.assertEqual("Cover", functions.cover(row, False))
+
 
     def test_spread(self):
         reader = csv.DictReader(data1)

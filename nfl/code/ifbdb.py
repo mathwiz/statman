@@ -169,7 +169,7 @@ def over_under_diff(row):
 
 def over_under_result(row):
     diff = over_under_diff(row)
-    if diff:
+    if diff != None:
         if diff == 0.0:
             return 'Push'
         elif diff > 0.0:
@@ -177,7 +177,7 @@ def over_under_result(row):
         else: 
             return 'Under'
     else:
-        return None 
+        return 'NA' 
 
 
 def add_game(records, team, season, week, win, loss, points, opp):
