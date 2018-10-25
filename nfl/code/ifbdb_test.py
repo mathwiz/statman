@@ -69,17 +69,17 @@ class Test(unittest.TestCase):
                     self.assertEqual("Push", functions.over_under_result(row))
 
 
-    def test_spread(self):
+    def test_spread_result(self):
         reader = csv.DictReader(data2)
         for row in reader:
             if row['schedule_week'] == '1':
-                self.assertEqual("Cover", functions.cover(row, True))
+                self.assertEqual(True, functions.cover(row, True))
             if row['schedule_week'] == '2':
-                self.assertEqual("Not Cover", functions.cover(row, True))
+                self.assertEqual(False, functions.cover(row, True))
             if row['schedule_week'] == '3':
-                    self.assertEqual("Cover", functions.cover(row, True))
+                    self.assertEqual(True, functions.cover(row, True))
             if row['schedule_week'] == '7':
-                    self.assertEqual("Cover", functions.cover(row, False))
+                    self.assertEqual(True, functions.cover(row, False))
 
 
     def test_spread(self):
