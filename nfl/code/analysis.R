@@ -1,18 +1,19 @@
 # Analysis of NFL
 
+# Options
 library(Rcmdr)
+library(ggplot2)
+library(Hmisc)
 
 # Startup
 projectDir <- "~/Dev/Github/statman/nfl"
 setwd(file.path(projectDir, "code"))
 getwd()
 load(".RData")
-library(ggplot2)
-library(Hmisc)
 dataDir <- file.path(projectDir, "data")
 
 # Loading
- nfl2 = read.csv(file.path(dataDir, "games", "betting.csv"), header=TRUE)
+ nfl = read.csv(file.path(dataDir, "games", "betting.csv"), header=TRUE)
 describe(nfl)
 
 # Analysis
