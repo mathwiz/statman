@@ -52,3 +52,4 @@ ggsave("Spread_Diff_Density.png")
 boxplot <- ggplot(nfl, aes(home_fav, spread_diff))
 boxplot + geom_boxplot() + labs(x = "Favorite", y = "Spread Result")
 ggsave("Spread_Diff_Boxplot.png")
+
