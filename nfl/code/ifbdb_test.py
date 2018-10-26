@@ -27,7 +27,8 @@ data2 = [
 '09/17/2017,2017,2,Seattle Seahawks,San Francisco 49ers,CenturyLink Field,SEA,-13.5,42.5,,65,11,,12,9,FALSE,FALSE',
 '09/24/2017,2017,3,Tennessee Titans,Seattle Seahawks,LP Stadium,TEN,-3,42,,89,4,,33,27,FALSE,FALSE',
 '10/01/2017,2017,4,Seattle Seahawks,Indianapolis Colts,CenturyLink Field,SEA,-13,41.5,,52,3,,46,18,FALSE,FALSE',
-'10/14/1979,1979,7,Kansas City Chiefs,Denver Broncos,Arrowhead Stadium,DEN,-1,34,,47,12,43,10,24,FALSE,FALSE'
+'10/14/1979,1979,7,Kansas City Chiefs,Denver Broncos,Arrowhead Stadium,DEN,-1,34,,47,12,43,10,24,FALSE,FALSE',
+'12/10/2017,2017,14,Tampa Bay Buccaneers,Detroit Lions,Raymond James Stadium,PICK,0,47.5,,55,9,,21,24,FALSE,FALSE'
 ]
 
 records = {}
@@ -80,6 +81,21 @@ class Test(unittest.TestCase):
                     self.assertEqual(True, functions.cover(row, True))
             if row['schedule_week'] == '7':
                     self.assertEqual(True, functions.cover(row, False))
+
+
+    def test_spread_diff(self):
+        reader = csv.DictReader(data2)
+        for row in reader:
+            if row['schedule_week'] == '1':
+                self.assertEqual(5.0, functions.spread_diff(row, True))
+            if row['schedule_week'] == '2':
+                self.assertEqual(-10.5, functions.spread_diff(row, True))
+            if row['schedule_week'] == '3':
+                self.assertEqual(3.0, functions.spread_diff(row, True))
+            if row['schedule_week'] == '7':
+                self.assertEqual(13.0, functions.spread_diff(row, False))
+            if row['schedule_week'] == '14':
+                self.assertEqual(None, functions.spread_diff(row, False))
 
 
     def test_spread(self):

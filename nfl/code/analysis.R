@@ -4,20 +4,51 @@
 library(Rcmdr)
 library(ggplot2)
 library(Hmisc)
+library(dplyr)
 
 # Startup
 projectDir <- "~/Dev/Github/statman/nfl"
 setwd(file.path(projectDir, "code"))
 getwd()
 load(".RData")
+ls()
 dataDir <- file.path(projectDir, "data")
 
 # Loading
- nfl = read.csv(file.path(dataDir, "games", "betting.csv"), header=TRUE)
+nfl = read.csv(file.path(dataDir, "games", "betting.csv"), header=TRUE)
 describe(nfl)
+names(nfl)
 
 # Analysis
-names(nfl)
 mean(nfl$spread)
+
+mean(nfl$over_under_line)
+
 levels(nfl$over_under_result)
-subset(nfl, week==17 & season==2017, select=c(home_fav, favorite, underdog, spread, home_recent_scoring, away_recent_scoring, home_recent_allowed, away_recent_allowed, score_home, score_away, spread_diff))
+
+noOverUnder <- subset(nfl, over_under_result == "", select=c(season, week, home_team, away_team, score_home, score_away, over_under_line, over_under_diff, over_under_result))
+
+nrow(noOverUnder)
+
+nfl2017 <- subset(nfl, season==2017,)
+nflRecent <- subset(nfl, season>2014,)
+orderedVsSpread <- nfl[order(nfl$spread_diff),]
+head(orderedVsSpread)
+tail(orderedVsSpread)
+
+# Plots
+graph <- ggplot(nflRecent, aes(home_recent_scoring, score_home, colour=home_fav))
+graph + geom_point(position="jitter") + geom_smooth(method="lm", aes(fill=home_fav) alpha=0.3)
+
+histogram <- ggplot(nfl, aes(spread_diff))
+histogram + geom_histogram(binwidth=1)
+ggsave("Spread_Diff.png")
+
+density <- ggplot(nfl, aes(spread_diff))
+density + geom_density()
+ggsave("Spread_Diff_Density.png")
+
+
+boxplot <- ggplot(nfl, aes(home_fav, spread_diff))
+boxplot + geom_boxplot() + labs(x = "Favorite", y = "Spread Result")
+
