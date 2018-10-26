@@ -2,9 +2,9 @@
 
 # Options
 library(Rcmdr)
+library(dplyr)
 library(ggplot2)
 library(Hmisc)
-library(dplyr)
 
 # Startup
 projectDir <- "~/Dev/Github/statman/nfl"
@@ -36,6 +36,7 @@ orderedVsSpread <- nfl[order(nfl$spread_diff),]
 head(orderedVsSpread)
 tail(orderedVsSpread)
 
+
 # Plots
 graph <- ggplot(nflRecent, aes(home_recent_scoring, score_home, colour=home_fav))
 graph + geom_point(position="jitter") + geom_smooth(method="lm", aes(fill=home_fav) alpha=0.3)
@@ -48,7 +49,6 @@ density <- ggplot(nfl, aes(spread_diff))
 density + geom_density()
 ggsave("Spread_Diff_Density.png")
 
-
 boxplot <- ggplot(nfl, aes(home_fav, spread_diff))
 boxplot + geom_boxplot() + labs(x = "Favorite", y = "Spread Result")
-
+ggsave("Spread_Diff_Boxplot.png")
