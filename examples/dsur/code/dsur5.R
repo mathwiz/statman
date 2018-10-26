@@ -14,9 +14,9 @@ library(pastecs)
 library(psych)
 
 
-chickFlick <- read.delim("ChickFlick.dat", header=TRUE)
-head(chickFlick)
+dlf <- read.delim(file.path(dataDir, "DownloadFestival(No Outlier).dat"), header=TRUE)
+head(dlf)
 
-bar <- ggplot(chickFlick, aes(film, arousal))
+HistDay1 <- ggplot(dlf, aes(day1)) + theme(legend.position="none") + geom_histogram(aes(y=..density..), colour="Black", fill="White") + labs(x="Hygiene Score Day 1", y="Density")
 
-bar + stat_summary(fun.y=mean, geom="bar", fill="White", colour="Black") + stat_summary(fun.data=mean_cl_normal, geom="pointrange") + labs(x="Film", y="Mean Arousal")
+HistDay1 + stat_function(fun=dnorm, args=list(mean=mean(dlf$day1, na.rm=TRUE), sd=sd(dlf$day1, na.rm=TRUE)), colour="Black", size=1)
