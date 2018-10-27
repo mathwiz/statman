@@ -43,3 +43,5 @@ describe(rexam)
 
 by(data=rexam$exam, INDICES=rexam$uni, FUN=describe)
 
+by(data=rexam$exam, INDICES=rexam$uni, FUN=stat.desc)
+
