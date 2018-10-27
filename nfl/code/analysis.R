@@ -19,6 +19,13 @@ nfl = read.csv(file.path(dataDir, "games", "betting.csv"), header=TRUE)
 describe(nfl)
 names(nfl)
 
+nfl$home_recent_wins_factor <- factor(nfl$home_recent_wins, levels=c(0:5))
+describe(nfl$home_recent_wins_factor)
+
+nfl$away_recent_wins_factor <- factor(nfl$away_recent_wins, levels=c(0:5))
+describe(nfl$away_recent_wins_factor)
+
+
 # Analysis
 mean(nfl$spread)
 
@@ -36,6 +43,15 @@ orderedVsSpread <- nfl[order(nfl$spread_diff),]
 head(orderedVsSpread)
 tail(orderedVsSpread)
 
+by(nfl$spread_diff, nfl$home_fav, describe)
+by(nfl$over_under_diff, nfl$home_fav, describe)
+
+by(nfl$spread_diff, nfl$home_recent_wins_factor, describe)
+by(nfl$over_under_diff, nfl$home_recent_wins_factor, describe)
+
+by(nfl$spread_diff, nfl$away_recent_wins_factor, describe)
+by(nfl$over_under_diff, nfl$home_recent_wins_factor, describe)
+
 
 # Plots
 graph <- ggplot(nflRecent, aes(home_recent_scoring, score_home, colour=home_fav))
@@ -52,4 +68,3 @@ ggsave("Spread_Diff_Density.png")
 boxplot <- ggplot(nfl, aes(home_fav, spread_diff))
 boxplot + geom_boxplot() + labs(x = "Favorite", y = "Spread Result")
 ggsave("Spread_Diff_Boxplot.png")
-
