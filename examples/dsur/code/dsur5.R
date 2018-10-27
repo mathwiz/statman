@@ -45,3 +45,15 @@ by(data=rexam$exam, INDICES=rexam$uni, FUN=describe)
 
 by(data=rexam$exam, INDICES=rexam$uni, FUN=stat.desc)
 
+by(cbind(data=rexam$exam, data=rexam$numeracy), rexam$uni, describe)
+
+by(rexam[, c("exam", "numeracy")], rexam$uni, stat.desc, basic=FALSE, norm=TRUE)
+
+dunceData <- subset(rexam, rexam$uni == "Duncetown University")
+sussexData <- subset(rexam, rexam$uni == "Sussex University")
+
+
+hist.numeracy.duncetown <- ggplot(dunceData, aes(numeracy)) + theme(legend.position="none") + geom_histogram(aes(y=..density..), fill="White", colour="Black", binwidth=1) + labs(x="Numeracy Score", y="Density") + stat_function(fun=dnorm, args=list(mean=mean(dunceData$numeracy, na.rm=TRUE), sd=sd(dunceData$numeracy, na.rm=TRUE)), colour="Blue", size=1)
+
+hist.numeracy.sussex <- ggplot(sussexData, aes(numeracy)) + theme(legend.position="none") + geom_histogram(aes(y=..density..), fill="White", colour="Black", binwidth=1) + labs(x="Numeracy Score", y="Density") + stat_function(fun=dnorm, args=list(mean=mean(sussexData$numeracy, na.rm=TRUE), sd=sd(sussexData$numeracy, na.rm=TRUE)), colour="Blue", size=1)
+
