@@ -35,5 +35,15 @@ cor(examData$Exam, examData$Anxiety, use="pairwise.complete.obs", method="kendal
 rcorr(examData$Exam, examData$Anxiety, type="pearson")
 
 cor.test(examData$Exam, examData$Anxiety, alternative="less", method="pearson", conf.level=0.99)
+cor.test(examData$Exam, examData$Anxiety, alternative="two.sided", method="pearson", conf.level=0.99)
+cor.test(examData$Exam, examData$Anxiety, alternative="greater", method="pearson", conf.level=0.99)
 
 cor(examData[, c("Exam", "Anxiety", "Revise")])
+
+Hmisc::rcorr(as.matrix(examData[, c("Exam", "Anxiety", "Revise")]))
+
+# Calculate R^2 as percent shared variance
+cor(examData[, c("Exam", "Anxiety", "Revise")])^2 * 100
+
+
+
