@@ -15,7 +15,7 @@ load(".RData")
 ls()
 dataDir <- file.path(projectDir, "data")
 
-# Loading
+# Loading and Varialbes
 nfl = read.csv(file.path(dataDir, "games", "betting.csv"), header=TRUE)
 describe(nfl)
 names(nfl)
@@ -26,10 +26,15 @@ describe(nfl$home_recent_wins_factor)
 nfl$away_recent_wins_factor <- factor(nfl$away_recent_wins, levels=c(0:5))
 describe(nfl$away_recent_wins_factor)
 
+nfl$over_under_pred <- (nfl$home_recent_scoring + nfl$away_recent_allowed)/2 + (nfl$away_recent_scoring + nfl$home_recent_allowed)/2
+nfl$over_under_diff_pred <- nfl$over_under_pred - nfl$over_under_line
+summary(nfl$over_under_diff_pred)
 
-# Analysis
+
+# Descriptive Analysis
 describe(nfl$spread_diff)
 describe(nfl$over_under_diff)
+summary(nfl$over_under_line)
 
 nfl2017 <- subset(nfl, season==2017,)
 nflRecent <- subset(nfl, season>2014,)
@@ -84,3 +89,14 @@ ggsave("Spread_Diff_Density.png")
 boxplot <- ggplot(nfl, aes(home_fav, spread_diff))
 boxplot + geom_boxplot() + labs(x = "Favorite", y = "Spread Result")
 ggsave("Spread_Diff_Boxplot.png")
+
+
+# Regression
+OverUnderModel <- lm(nfl$over_under_line ~ nfl$over_under_pred, na.action=na.exclude)
+summary(OverUnderModel)
+plot(nfl$over_under_pred, nfl$over_under_line)
+
+StrangeOverUnder <- nfl[nfl$over_under_pred == 0.0,c("over_under_line")]
+head(StrangeOverUnder, 20)
+
+
