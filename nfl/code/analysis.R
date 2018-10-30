@@ -80,6 +80,9 @@ over_under.histogram <- ggplot(nfl, aes(over_under_diff))
 over_under.histogram + geom_histogram(aes(y=..density..), binwidth=1, colour="Black", fill="White") + stat_function(fun=dnorm, args=list(mean=mean(nfl$over_under_diff, na.rm=TRUE), sd=sd(nfl$over_under_diff, na.rm=TRUE)),colour="Blue", size=1)
 ggsave("Over_Under_Diff.png")
 
+over_under_total.histogram <- ggplot(predictorGames, aes(over_under_total))
+over_under_total.histogram + geom_histogram(aes(y=..density..), binwidth=1, colour="Black", fill="White") + stat_function(fun=dnorm, args=list(mean=mean(nfl$over_under_total, na.rm=TRUE), sd=sd(nfl$over_under_total, na.rm=TRUE)),colour="Blue", size=1)
+
 pick.histogram <- ggplot(pickEmGames, aes(over_under_diff))
 pick.histogram + geom_histogram(binwidth=2)
 
@@ -97,6 +100,6 @@ OverUnderModel <- lm(predictorGames$over_under_total ~ predictorGames$over_under
 summary(OverUnderModel)
 plot(predictorGames$over_under_pred, predictorGames$over_under_total)
 plot(predictorGames$over_under_pred, predictorGames$over_under_line)
-
+hist(predictorGames$over_under_total)
 
 
