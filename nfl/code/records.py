@@ -45,6 +45,7 @@ def make_header():
             'cover',
             'spread_diff',
             'over_under_result', 
+            'over_under_total',
             'over_under_diff'
           ]
     return row
@@ -99,6 +100,7 @@ def create_row(season, week, home, away, row):
         "Cover" if functions.cover(row, home_fav) else "Not Cover", 
         functions.spread_diff(row, home_fav),
         functions.over_under_result(row),
+        score_away + score_home,
         functions.over_under_diff(row),
     ]
     return row

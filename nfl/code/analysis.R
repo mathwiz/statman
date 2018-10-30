@@ -20,27 +20,28 @@ nfl = read.csv(file.path(dataDir, "games", "betting.csv"), header=TRUE)
 describe(nfl)
 names(nfl)
 
+nfl2017 <- subset(nfl, season==2017,)
+nflRecent <- subset(nfl, season>2014,)
+pickEmGames <- nfl[nfl$spread==0.0,]
+spreadGames <- nfl[nfl$spread!=0.0,]
+roadFavorites <- nfl[nfl$home_fav=="Away",]
+predictorGames <- nfl[nfl$week>5,]
+
 nfl$home_recent_wins_factor <- factor(nfl$home_recent_wins, levels=c(0:5))
 describe(nfl$home_recent_wins_factor)
 
 nfl$away_recent_wins_factor <- factor(nfl$away_recent_wins, levels=c(0:5))
 describe(nfl$away_recent_wins_factor)
 
-nfl$over_under_pred <- (nfl$home_recent_scoring + nfl$away_recent_allowed)/2 + (nfl$away_recent_scoring + nfl$home_recent_allowed)/2
-nfl$over_under_diff_pred <- nfl$over_under_pred - nfl$over_under_line
-summary(nfl$over_under_diff_pred)
+predictorGames$over_under_pred <- (predictorGames$home_recent_scoring + predictorGames$away_recent_allowed)/2 + (predictorGames$away_recent_scoring + predictorGames$home_recent_allowed)/2
+predictorGames$over_under_diff_pred <- predictorGames$over_under_pred - predictorGames$over_under_line
+summary(predictorGames$over_under_diff_pred)
 
 
 # Descriptive Analysis
 describe(nfl$spread_diff)
 describe(nfl$over_under_diff)
 summary(nfl$over_under_line)
-
-nfl2017 <- subset(nfl, season==2017,)
-nflRecent <- subset(nfl, season>2014,)
-pickEmGames <- nfl[nfl$spread==0.0,]
-spreadGames <- nfl[nfl$spread!=0.0,]
-roadFavorites <- nfl[nfl$home_fav=="Away",]
 
 describe(pickEmGames)
 describe(roadFavorites)
@@ -92,11 +93,10 @@ ggsave("Spread_Diff_Boxplot.png")
 
 
 # Regression
-OverUnderModel <- lm(nfl$over_under_line ~ nfl$over_under_pred, na.action=na.exclude)
+OverUnderModel <- lm(predictorGames$over_under_total ~ predictorGames$over_under_pred, na.action=na.exclude)
 summary(OverUnderModel)
-plot(nfl$over_under_pred, nfl$over_under_line)
+plot(predictorGames$over_under_pred, predictorGames$over_under_total)
+plot(predictorGames$over_under_pred, predictorGames$over_under_line)
 
-StrangeOverUnder <- nfl[nfl$over_under_pred == 0.0,c("over_under_line")]
-head(StrangeOverUnder, 20)
 
 
