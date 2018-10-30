@@ -9,9 +9,12 @@ dataDir <- file.path(projectDir, "data")
 library(ggplot2)
 library(Hmisc)
 library(Rcmdr)
+library(boot)
+library(polycor)
+library(ggm)
 
 
-# Adverts ~ Toffee data set
+## Adverts ~ Toffee data set
 adverts <- c(5,4,4,6,8)
 packets <- c(8,9,10,13,15)
 advertData <- data.frame(adverts, packets)
@@ -22,7 +25,7 @@ scatter <- ggplot(advertData, aes(adverts, packets))
 scatter + geom_point(position="jitter") + geom_smooth(method="lm", alpha=0.3)
 
 
-# Exam data
+## Exam data
 examData <- read.delim(file.path(dataDir, "Exam Anxiety.dat"), header=TRUE)
 head(examData)
 
@@ -46,4 +49,49 @@ Hmisc::rcorr(as.matrix(examData[, c("Exam", "Anxiety", "Revise")]))
 cor(examData[, c("Exam", "Anxiety", "Revise")])^2 * 100
 
 
+## Biggest Liar data set
+liarData <- read.delim(file.path(dataDir, "The Biggest Liar.dat"), header=TRUE)
+head(liarData)
+
+cor(liarData$Position, liarData$Creativity, method="spearman")
+
+liarMatrix <- as.matrix(liarData[, c("Position", "Creativity")])
+
+rcorr(liarMatrix)
+
+cor.test(liarData$Position, liarData$Creativity, method="spearman", alternative="less")
+
+cor(liarData$Position, liarData$Creativity, method="kendall")
+
+cor.test(liarData$Position, liarData$Creativity, method="kendall", alternative="less")
+
+bootTau <- function(liarData, i) { cor(liarData$Position[i], liarData$Creativity[i], use="complete.obs", method="kendall") }
+
+boot_kendall <- boot(liarData, bootTau, 2000)
+boot_kendall
+boot.ci(boot_kendall, conf=0.99)
+
+
+# Cat data set
+catData <- read.csv(file.path(dataDir, "pbcorr.csv"), header=TRUE)
+head(catData)
+
+cor(catData)
+cor.test(catData$time, catData$gender, method="pearson")
+cor.test(catData$time, catData$recode, method="pearson")
+
+catFreq <- table(catData$gender)
+prop.table(catFreq)
+
+polyserial(catData$time, catData$gender)
+
+
+# Partial Correlation Analysis
+examData2 <- examData[, c("Exam", "Anxiety", "Revise")]
+
+pc <- pcor(c("Exam", "Anxiety", "Revise"), var(examData2))
+
+pc^2
+
+pcor.test(pc, 1, 103) #103 sample size
 
