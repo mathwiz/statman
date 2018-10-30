@@ -5,6 +5,7 @@ library(Rcmdr)
 library(dplyr)
 library(ggplot2)
 library(Hmisc)
+library(polycor)
 
 # Startup
 projectDir <- "~/Dev/Github/statman/nfl"
@@ -33,10 +34,16 @@ describe(nfl$over_under_diff)
 nfl2017 <- subset(nfl, season==2017,)
 nflRecent <- subset(nfl, season>2014,)
 pickEmGames <- nfl[nfl$spread==0.0,]
+spreadGames <- nfl[nfl$spread!=0.0,]
 roadFavorites <- nfl[nfl$home_fav=="Away",]
 
 describe(pickEmGames)
 describe(roadFavorites)
+
+shapiro.test(roadFavorites$spread_diff)
+shapiro.test(pickEmGames$over_under_diff)
+shapiro.test(nflRecent$over_under_diff)
+
 
 orderedVsSpread <- nfl[order(nfl$spread_diff),]
 head(orderedVsSpread)
@@ -54,14 +61,17 @@ by(nfl$over_under_diff, nfl$home_recent_wins_factor, describe)
 
 # Plots
 graph <- ggplot(nflRecent, aes(home_recent_scoring, score_home, colour=home_fav))
-graph + geom_point(position="jitter") + geom_smooth(method="lm", aes(fill=home_fav) alpha=0.3)
+graph + geom_point(position="jitter") + geom_smooth(method="lm", aes(fill=home_fav), alpha=0.3)
+
+graph <- ggplot(spreadGames, aes(spread_diff, spread))
+graph + geom_point(position="jitter") + geom_smooth(method="lm", alpha=0.3)
 
 spread.histogram <- ggplot(nfl, aes(spread_diff))
-spread.histogram + geom_histogram(binwidth=1)
+spread.histogram + geom_histogram(aes(y=..density..), binwidth=1, colour="Black", fill="White") + stat_function(fun=dnorm, args=list(mean=mean(nfl$spread_diff, na.rm=TRUE), sd=sd(nfl$spread_diff, na.rm=TRUE)),colour="Blue", size=1)
 ggsave("Spread_Diff.png")
 
 over_under.histogram <- ggplot(nfl, aes(over_under_diff))
-over_under.histogram + geom_histogram(binwidth=1)
+over_under.histogram + geom_histogram(aes(y=..density..), binwidth=1, colour="Black", fill="White") + stat_function(fun=dnorm, args=list(mean=mean(nfl$over_under_diff, na.rm=TRUE), sd=sd(nfl$over_under_diff, na.rm=TRUE)),colour="Blue", size=1)
 ggsave("Over_Under_Diff.png")
 
 pick.histogram <- ggplot(pickEmGames, aes(over_under_diff))
