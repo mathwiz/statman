@@ -26,7 +26,11 @@ describe(nfl$home_recent_wins_factor)
 nfl$away_recent_wins_factor <- factor(nfl$away_recent_wins, levels=c(0:5))
 describe(nfl$away_recent_wins_factor)
 
-nfl$over_under_pred <- (nfl$home_recent_scoring + nfl$away_recent_allowed)/2 + (nfl$away_recent_scoring + nfl$home_recent_allowed)/2
+nfl$score_home_pred <- (nfl$home_recent_scoring + nfl$away_recent_allowed)/2
+
+nfl$score_away_pred <- (nfl$away_recent_scoring + nfl$home_recent_allowed)/2
+
+nfl$over_under_pred <- nfl$score_home_pred + nfl$score_away_pred
 
 nfl$over_under_diff_pred <- nfl$over_under_pred - nfl$over_under_line
 summary(nfl$over_under_diff_pred)
@@ -38,16 +42,16 @@ pickEmGames <- nfl[nfl$spread==0.0,]
 spreadGames <- nfl[nfl$spread!=0.0,]
 roadFavorites <- nfl[nfl$home_fav=="Away",]
 predictorGames <- nfl[nfl$week>5,]
-largeOverUnderPredDiff <- predictorGames[abs(predictorGames$over_under_diff_pred) > 0.5,]
-underPredDiff <- predictorGames[predictorGames$over_under_diff_pred < (-4),]
-overPredDiff <- predictorGames[predictorGames$over_under_diff_pred > 4,]
+largeOverUnderPredDiff <- predictorGames[abs(predictorGames$over_under_diff_pred) > 5.0,]
+underPredDiff <- predictorGames[predictorGames$over_under_diff_pred < (-5),]
+overPredDiff <- predictorGames[predictorGames$over_under_diff_pred > 5,]
 
 
 # Descriptive Analysis
 describe(nfl$spread_diff)
 describe(nfl$over_under_diff)
-summary(nfl$over_under_line)
-summary(nfl$over_under_total)
+describe(nfl$over_under_line)
+describe(nfl$over_under_total)
 
 describe(pickEmGames)
 describe(roadFavorites)
