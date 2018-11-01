@@ -139,6 +139,18 @@ def to_score(aString):
         return None
 
 
+def favorite_margin(row, home_fav):
+    score_home = row['score_home']
+    score_away = row['score_away']
+    if score_away and score_home:
+        if home_fav:
+            return float(score_home) - float(score_away)
+        else:
+            return float(score_away) - float(score_home)
+    else:
+        return None 
+
+
 def spread_diff(row, home_fav):
     line = spread(row)
     score_home = row['score_home']

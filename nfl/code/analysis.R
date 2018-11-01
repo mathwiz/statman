@@ -36,10 +36,14 @@ nfl$over_under_diff_pred <- nfl$over_under_pred - nfl$over_under_line
 summary(nfl$over_under_diff_pred)
 
 
-nfl2017 <- subset(nfl, season==2017,)
+nflQ1 <- subset(nfl, week <= 4,)
+nflQ2 <- subset(nfl, week > 4 & week <= 8,)
+nflQ3 <- subset(nfl, week > 8 & week <= 12,)
+nflQ4 <- subset(nfl, week > 12 & week <= 17,)
 nflRecent <- subset(nfl, season>2014,)
 pickEmGames <- nfl[nfl$spread==0.0,]
 spreadGames <- nfl[nfl$spread!=0.0,]
+largeSpreadGames <- nfl[nfl$spread > 10.0,]
 roadFavorites <- nfl[nfl$home_fav=="Away",]
 predictorGames <- nfl[nfl$week>5,]
 largeOverUnderPredDiff <- predictorGames[abs(predictorGames$over_under_diff_pred) > 5.0,]
@@ -79,11 +83,14 @@ by(nfl$over_under_diff, nfl$home_recent_wins_factor, describe)
 describe(predictorGames$over_under_diff_pred)
 
 # Plots
-graph <- ggplot(nflRecent, aes(home_recent_scoring, score_home, colour=home_fav))
-graph + geom_point(position="jitter") + geom_smooth(method="lm", aes(fill=home_fav), alpha=0.3)
+graph <- ggplot(nflQ4, aes(over_under_line, over_under_total, colour=home_fav))
+graph + geom_point(position="jitter") + geom_smooth(method="lm", aes(fill=over_under_total), alpha=0.3)
 
-graph <- ggplot(spreadGames, aes(spread_diff, spread))
-graph + geom_point(position="jitter") + geom_smooth(method="lm", alpha=0.3)
+graph <- ggplot(nflQ3, aes(spread, spread_diff, color=home_fav))
+graph + geom_point(position="jitter") + geom_smooth(method="lm", aes(fill=spread_diff), alpha=0.3)
+
+graph <- ggplot(nflQ3, aes(spread, favorite_margin, color=home_fav))
+graph + geom_point(position="jitter") + geom_smooth(method="lm", aes(fill=favorite_margin), alpha=0.3)
 
 spread.histogram <- ggplot(nfl, aes(spread_diff))
 spread.histogram + geom_histogram(aes(y=..density..), binwidth=1, colour="Black", fill="White") + stat_function(fun=dnorm, args=list(mean=mean(nfl$spread_diff, na.rm=TRUE), sd=sd(nfl$spread_diff, na.rm=TRUE)),colour="Blue", size=1)
@@ -118,8 +125,12 @@ overUnderPred + geom_point(position="jitter") + geom_smooth(method="lm", aes(fil
 OverUnderModel <- lm(predictorGames$over_under_total ~ predictorGames$over_under_pred, na.action=na.exclude)
 summary(OverUnderModel)
 OverUnderLineModel <- lm(predictorGames$over_under_total ~ predictorGames$over_under_line, na.action=na.exclude)
-summary(OverUnderModel)
 summary(OverUnderLineModel)
+
+MultOverUnderModel <- lm(predictorGames$favorite_margin ~ predictorGames$spread, na.action=na.exclude)
+summary(MultOverUnderModel)
+
+
 plot(predictorGames$over_under_pred, predictorGames$over_under_total)
 plot(predictorGames$over_under_line, predictorGames$over_under_total)
 hist(predictorGames$over_under_total)

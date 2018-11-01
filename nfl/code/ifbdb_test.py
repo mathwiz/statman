@@ -57,6 +57,19 @@ def output_row(season, week, home, away, row):
 
 class Test(unittest.TestCase):
 
+    def test_favorite_margin(self):
+        reader = csv.DictReader(data2)
+        for row in reader:
+            if row['schedule_week'] == '1':
+                self.assertEqual(8, functions.favorite_margin(row, True))
+            if row['schedule_week'] == '2':
+                self.assertEqual(3, functions.favorite_margin(row, True))
+            if row['schedule_week'] == '3':
+                self.assertEqual(6, functions.favorite_margin(row, True))
+            if row['schedule_week'] == '7':
+                self.assertEqual(14, functions.favorite_margin(row, False))
+
+
     def test_over_under(self):
         reader = csv.DictReader(data2)
         for row in reader:
