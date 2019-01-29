@@ -1,4 +1,4 @@
-projectDir <- "c:/Users/Yohan/Documents/GitHub/statman/examples/dsur"
+projectDir <- "/Users/yohanlee/Dev/GitHub/statman/examples/dsur"
 setwd(file.path(projectDir, "code"))
 getwd()
 load(".RData")
