@@ -1,7 +1,7 @@
-projectDir <- "/Users/yohanlee/Dev/GitHub/statman/examples/dsur"
-setwd(file.path(projectDir, "code"))
+repoDir <- "/Users/yohanlee/Dev/GitHub"
+projectDir <- "statman/examples/dsur"
+setwd(file.path(repoDir, projectDir, "code"))
 dataDir <- file.path(projectDir, "data")
-
 
 library(Rcmdr)
 library(boot)
