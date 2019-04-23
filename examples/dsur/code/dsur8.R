@@ -63,4 +63,7 @@ mlChat<- mlogit.data(chatData, choice="Success", shape="wide") # reshape multipl
 summary(mlChat)
 
 chatModel<- mlogit(Success ~ 1 | Good_Mate + Funny + Gender + Sex + Gender:Sex + Funny:Gender, data=mlChat, reflevel=3)
+summary(chatModel)
+data.frame(exp(chatModel$coefficients))
+exp(confint(chatModel))
 
