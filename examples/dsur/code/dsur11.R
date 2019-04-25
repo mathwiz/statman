@@ -61,3 +61,5 @@ plot(covariateFirst)
 robustModel<- ancova(mischief2 ~ cloak + mischief1, data=invisibility)
 robustModel
 
+ancboot(mischief2 ~ cloak + mischief1, data=invisibility)
+
