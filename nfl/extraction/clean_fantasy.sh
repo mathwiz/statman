@@ -8,4 +8,5 @@ cat $SRC_DIR/$YEAR.html \
 | perl tables_raw.pl \
 | perl tables_w_key.pl \
 | perl -wnl fantasy_lines.pl \
+| perl -wnl extract_name.pl \
 > $DEST_DIR/$YEAR.csv
