@@ -9,4 +9,5 @@ cat $SRC_DIR/$YEAR.html \
 | perl tables_w_key.pl \
 | perl -wnl fantasy_lines.pl \
 | perl -wnl extract_name.pl \
+| perl -wnls add_season.pl -season=$YEAR \
 > $DEST_DIR/$YEAR.csv
