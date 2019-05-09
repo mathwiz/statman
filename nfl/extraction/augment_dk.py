@@ -6,4 +6,4 @@ all = pd.read_csv("/Users/yohanlee/Cloud/Data/Nfl/fantasy/augmented/fantasy_all.
 print(all.head())
 print(all.tail())
 
-
+print(all.loc[all['Key'] == 'JohnDa08'])
