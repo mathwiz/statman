@@ -1,8 +1,11 @@
+import sys
 import numpy as np
 import pandas as pd
 import fantasymunger as fm
 
-all = pd.read_csv("/Users/yohanlee/Cloud/Data/Nfl/fantasy/augmented/fantasy_all.csv")
+file = sys.argv[1]
+print("Processing", file)
+all = pd.read_csv(file)
 
 print(all.head())
 print(all.tail())
