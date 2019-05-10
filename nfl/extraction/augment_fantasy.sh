@@ -5,4 +5,4 @@ DEST_DIR=/Users/yohanlee/Cloud/Data/Nfl/fantasy/augmented
 FILE=fantasy_all.csv
 OUT=fantasy_aug.csv
 
-python ./augment_dk.py $SRC_DIR/$FILE # > $DEST_DIR/$OUT 
+python ./augment_dk.py $SRC_DIR/$FILE $DEST_DIR/$OUT 
