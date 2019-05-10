@@ -14,6 +14,12 @@ def new_vars(data):
     data['PaYPG'] = np.NaN
     data['RuYPG'] = np.NaN
     data['ReYPG'] = np.NaN
+    data['PaTDPG'] = np.NaN
+    data['RuTDPG'] = np.NaN
+    data['ReTDPG'] = np.NaN
+    data['PaAPG'] = np.NaN
+    data['RuAPG'] = np.NaN
+    data['ReRPG'] = np.NaN
     data['NextDKG'] = np.NaN
 
 
@@ -33,6 +39,12 @@ def actual_fantasy(data):
         data.loc[index, 'PaYPG'] = get_ppg(row, 'PaYds')
         data.loc[index, 'RuYPG'] = get_ppg(row, 'RuYds')
         data.loc[index, 'ReYPG'] = get_ppg(row, 'ReYds')
+        data.loc[index, 'PaTDPG'] = get_ppg(row, 'PaTD')
+        data.loc[index, 'RuTDPG'] = get_ppg(row, 'RuTD')
+        data.loc[index, 'ReTDPG'] = get_ppg(row, 'ReTD')
+        data.loc[index, 'PaAPG'] = get_ppg(row, 'PaAtt')
+        data.loc[index, 'RuAPG'] = get_ppg(row, 'RuAtt')
+        data.loc[index, 'ReRPG'] = get_ppg(row, 'ReRec')
 
 
 def get_key(row):
