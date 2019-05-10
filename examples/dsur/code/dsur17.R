@@ -30,4 +30,26 @@ plot(pc1$values, type="b")
 pc2<- principal(raqMatrix, nfactors=4, rotate="none")
 pc2
 
+factor.model(pc2$loadings)
+factor.residuals(raqMatrix, pc2$loadings)
+
+## analyze residuals
+residuals<- factor.residuals(raqMatrix, pc2$loadings)
+residuals<- as.matrix(residuals[upper.tri(residuals)])
+large.resid<- abs(residuals) > 0.05
+sum(large.resid) / nrow(residuals)
+sqrt(mean(residuals^2))
+hist(residuals)
+
+
+                                        # Rotation
+
+pc3<- principal(raqMatrix, nfactors=4, rotate="varimax")
+print.psych(pc3, cut=0.3, sort=TRUE)
+
+pc4<- principal(raqMatrix, nfactors=4, rotate="oblimin")
+print.psych(pc4, cut=0.3, sort=TRUE)
+## structure matrix
+pc4$loadings %*% pc4$Phi
+
 
