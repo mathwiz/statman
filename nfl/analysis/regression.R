@@ -38,5 +38,24 @@ head(wr2018)
 te2018<- teDat[which(teDat$Season==2018),]
 head(te2018)
 
-predict(wrModel, wr2018[1:5], interval="predict")
-wr
+rows<- qb2018[1:12,]
+rows<- qbDat[sample(nrow(qbDat), 10), ]
+rows
+predict(qbModel, rows, interval="predict")
+
+rows<- rb2018[1:12,]
+rows<- rbDat[sample(nrow(rbDat), 10), ]
+rows
+predict(rbModel, rows, interval="predict")
+
+rows<- wr2018[1:12,]
+rows<- wrDat[sample(nrow(wrDat), 10), ]
+rows
+predict(wrModel, rows, interval="predict")
+
+rows<- te2018[1:12,]
+rows<- teDat[sample(nrow(teDat), 10), ]
+rows
+predict(teModel, rows, interval="predict")
+
+
