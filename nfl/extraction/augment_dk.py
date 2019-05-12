@@ -11,15 +11,15 @@ all = pd.read_csv(file)
 draftKings = {}
 
 def new_vars(data):
-    data['PaYPG'] = np.NaN
-    data['RuYPG'] = np.NaN
-    data['ReYPG'] = np.NaN
-    data['PaTDPG'] = np.NaN
-    data['RuTDPG'] = np.NaN
-    data['ReTDPG'] = np.NaN
-    data['PaAPG'] = np.NaN
-    data['RuAPG'] = np.NaN
-    data['ReRPG'] = np.NaN
+    data['PaTDPG'] = round(data['PaTD'] / data['G'], 2)
+    data['RuTDPG'] = round(data['RuTD'] / data['G'], 2)
+    data['ReTDPG'] = round(data['ReTD'] / data['G'], 2)
+    data['PaYPG'] = round(data['PaYds'] / data['G'], 2)
+    data['RuYPG'] = round(data['RuYds'] / data['G'], 2)
+    data['ReYPG'] = round(data['ReYds'] / data['G'], 2)
+    data['PaAPG'] = round(data['PaAtt'] / data['G'], 2)
+    data['RuAPG'] = round(data['RuAtt'] / data['G'], 2)
+    data['ReRPG'] = round(data['ReRec'] / data['G'], 2)
     data['NextDKG'] = np.NaN
 
 
@@ -36,15 +36,6 @@ def build_map(data):
 def actual_fantasy(data):
     for index, row in data.iterrows():
         data.loc[index, 'NextDKG'] = next_year_dkg(row)
-        data.loc[index, 'PaYPG'] = get_ppg(row, 'PaYds')
-        data.loc[index, 'RuYPG'] = get_ppg(row, 'RuYds')
-        data.loc[index, 'ReYPG'] = get_ppg(row, 'ReYds')
-        data.loc[index, 'PaTDPG'] = get_ppg(row, 'PaTD')
-        data.loc[index, 'RuTDPG'] = get_ppg(row, 'RuTD')
-        data.loc[index, 'ReTDPG'] = get_ppg(row, 'ReTD')
-        data.loc[index, 'PaAPG'] = get_ppg(row, 'PaAtt')
-        data.loc[index, 'RuAPG'] = get_ppg(row, 'RuAtt')
-        data.loc[index, 'ReRPG'] = get_ppg(row, 'ReRec')
 
 
 def get_key(row):
@@ -57,7 +48,11 @@ def get_season(row):
 
 def get_ppg(row, stat):
     games = row['G']
-    return 0.0 if games == 0 else round(row[stat] / games, 2)
+    return ppg(row[stat], games)
+
+
+def ppg(val, games):
+    return 0.0 if games == 0 else round(val / games, 2)
 
 
 def next_year_dkg(row):
@@ -75,9 +70,12 @@ actual_fantasy(all)
 
 
 # testing
-print(draftKings['JohnDa08'])
-print(draftKings['ElliEz00'])
-print(draftKings['McCoLe01'])
-print(draftKings['RodgAa00'])
-print(all.head(10))
-print(all.tail(10))
+# print(all.mean(axis=0)['Age'])
+# print(draftKings['JohnDa08'])
+# print(draftKings['ElliEz00'])
+# print(draftKings['McCoLe01'])
+# print(draftKings['RodgAa00'])
+print(all.loc[all['FantPos'] == 'QB'].head())
+print(all.loc[all['FantPos'] == 'RB'].head())
+print(all.loc[all['FantPos'] == 'WR'].head())
+print(all[570:580])
