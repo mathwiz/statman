@@ -7,6 +7,7 @@ head(chickFlick)
 
 bar <- ggplot(chickFlick, aes(film, arousal))
 
+
 bar + stat_summary(fun.y=mean, geom="bar", fill="White", colour="Black") + stat_summary(fun.data=mean_cl_normal, geom="pointrange") + labs(x="Film", y="Mean Arousal")
 
 bar <- ggplot(chickFlick, aes(film, arousal, fill=gender))
@@ -38,3 +39,4 @@ line <- ggplot(textMessages, aes(Time, Grammar_Score, colour=Group))
 line + stat_summary(fun.y=mean, geom="point") + stat_summary(fun.y=mean, geom="line", aes(group=Group), linetype="dashed") + stat_summary(fun.data=mean_cl_normal, geom="errorbar", width=0.2) + labs(x="Time", y="Grammar Score", colour="Group")
 
 ggsave("TextMessages_Line.png")
+

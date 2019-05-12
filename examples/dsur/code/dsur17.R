@@ -67,10 +67,8 @@ mathFear<- raqDat[, c(8, 11, 17)]
 peerEvaluation<- raqDat[, c(2, 9, 19, 22, 23)]
 
 alpha(computerFear)
-alpha(statisticsFear, keys=c(1, -1, 1, 1, 1, 1, 1, 1))
+alpha(statisticsFear, keys=c("Q03")) # reverse code Q03
 alpha(mathFear)
 alpha(peerEvaluation)
-
-
 
 
