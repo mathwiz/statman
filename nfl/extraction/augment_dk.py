@@ -5,6 +5,7 @@ import fantasymunger as fm
 
 file = sys.argv[1]
 outdir = sys.argv[2]
+outfile = sys.argv[3]
 print("Processing", file, "\n")
 all = pd.read_csv(file)
 
@@ -67,7 +68,7 @@ build_map(all)
 actual_fantasy(all)
 
 # output
-all.to_csv(outdir + "temp.csv")
+all.to_csv(outdir + outfile, index=False)
 
 # testing
 # print(all.mean(axis=0)['Age'])
