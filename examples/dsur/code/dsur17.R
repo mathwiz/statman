@@ -53,3 +53,24 @@ print.psych(pc4, cut=0.3, sort=TRUE)
 pc4$loadings %*% pc4$Phi
 
 
+                                        # Factor scores
+
+pc5<- principal(raqMatrix, nfactors=4, rotate="oblimin", scores=TRUE)
+names(pc5) # no scores?
+
+
+                                        # Reliability
+
+computerFear<- raqDat[, c(6, 7, 10, 13, 14, 15, 18)]
+statisticsFear<- raqDat[, c(1, 3, 4, 5, 12, 16, 20, 21)]
+mathFear<- raqDat[, c(8, 11, 17)]
+peerEvaluation<- raqDat[, c(2, 9, 19, 22, 23)]
+
+alpha(computerFear)
+alpha(statisticsFear, keys=c(1, -1, 1, 1, 1, 1, 1, 1))
+alpha(mathFear)
+alpha(peerEvaluation)
+
+
+
+
