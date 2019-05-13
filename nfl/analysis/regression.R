@@ -1,3 +1,5 @@
+library(dplyr)
+
 dataDir<- "../data"
 
 qbDat<- read.csv(file.path(dataDir, "qb.csv"), header=TRUE)
@@ -29,33 +31,26 @@ summary.lm(rbModel)
 
 
 # Prediction
-qb2018<- qbDat[which(qbDat$Season==2018),]
-head(qb2018)
-rb2018<- rbDat[which(rbDat$Season==2018),]
-head(rb2018)
-wr2018<- wrDat[which(wrDat$Season==2018),]
-head(wr2018)
-te2018<- teDat[which(teDat$Season==2018),]
-head(te2018)
+addPrediction<- function(data, model, season, n) {
+	newDat<- data[which(data$Season==season), ]
+	newDat$DKPG<- newDat$DKPt / newDat$G 
+	newDat$fit<- predict(model, newDat, interval="predict")[,1]
+	newDat<- top_n(newDat, n*2, newDat$DKPG)
+	avgPrediction<- mean(newDat$fit)
+	newDat$differential<- newDat$fit - avgPrediction
+	return(newDat)
+}
 
-rows<- qb2018[1:12,]
-rows<- qbDat[sample(nrow(qbDat), 10), ]
-rows
-predict(qbModel, rows, interval="predict")
+qb2018<- addPrediction(qbDat, qbModel, 2018, 16)
+dplyr::select(qb2018, Player, DKPt, DKPG, fit, differential)[order(-qb2018$fit), ]
 
-rows<- rb2018[1:12,]
-rows<- rbDat[sample(nrow(rbDat), 10), ]
-rows
-predict(rbModel, rows, interval="predict")
+rb2018<- addPrediction(rbDat, rbModel, 2018, 32)
+dplyr::select(rb2018, Player, DKPt, DKPG, fit, differential)[order(-rb2018$fit), ]
 
-rows<- wr2018[1:12,]
-rows<- wrDat[sample(nrow(wrDat), 10), ]
-rows
-predict(wrModel, rows, interval="predict")
+wr2018<- addPrediction(wrDat, wrModel, 2018, 32)
+dplyr::select(wr2018, Player, DKPt, DKPG, fit, differential)[order(-wr2018$fit), ]
 
-rows<- te2018[1:12,]
-rows<- teDat[sample(nrow(teDat), 10), ]
-rows
-predict(teModel, rows, interval="predict")
+te2018<- addPrediction(teDat, teModel, 2018, 16)
+dplyr::select(te2018, Player, DKPt, DKPG, fit, differential)[order(-te2018$fit), ]
 
 
