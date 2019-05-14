@@ -3,22 +3,6 @@ library(FNN)
 library(caret)
 
 
-dataDir<- "../data"
-
-qbDat<- read.csv(file.path(dataDir, "qb.csv"), header=TRUE)
-head(qbDat)
-
-rbDat<- read.csv(file.path(dataDir, "rb.csv"), header=TRUE)
-head(rbDat)
-
-wrDat<- read.csv(file.path(dataDir, "wr.csv"), header=TRUE)
-head(wrDat)
-
-teDat<- read.csv(file.path(dataDir, "te.csv"), header=TRUE)
-head(teDat)
-
-
-
 trimCols<- function(df) {
 	return( df[c("Season", "Rk", "Player", "Age", "G", "DKPt", "PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG", "NextDKG")] )
 }
@@ -37,11 +21,6 @@ qbTrain<- qbMain[qb_train, ]
 qbTrain<- trimCols(qbTrain)
 qbTest<- qbMain[-qb_train, ]
 qbTest<- trimCols(qbTest)
-
-head(qbTrain)
-nrow(qbTrain)
-head(qbTest)
-nrow(qbTest)
 
 
 

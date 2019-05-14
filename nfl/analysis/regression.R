@@ -39,7 +39,6 @@ dplyr::select(wr2018, Player, DKPt, DKPG, fit, differential)[order(-wr2018$fit),
 te2018<- addPrediction(teDat, teModel, 2018, 12)
 dplyr::select(te2018, Player, DKPt, DKPG, fit, differential)[order(-te2018$fit), ]
 
-
 allPred<- rbind(rb2018, wr2018, te2018, qb2018)
 dplyr::select(allPred, Player, DKPt, DKPG, fit, differential)[order(-allPred$differential), ]
 
