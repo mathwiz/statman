@@ -1,5 +1,7 @@
 library(dplyr)
 library(FNN)
+library(caret)
+
 
 dataDir<- "../data"
 
