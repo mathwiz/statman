@@ -1,27 +1,54 @@
 library(dplyr)
 library(FNN)
 library(caret)
+library(ISLR)
 
 
 trimCols<- function(df) {
-	return( df[c("Season", "Rk", "Player", "Age", "G", "DKPt", "PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG", "NextDKG")] )
+    return( df[c("Season", "Rk", "Player", "Age", "G", "DKPt", "PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG", "NextDKG")] )
 }
 
-trainingIndexes<- function(df) {
-	sample.int(nrow(df), nrow(df)/2)
+fiftyFiftySplit<- function(df) {
+    sample.int(nrow(df), nrow(df)/2)
 }
 
 
-qbMain<- qbDat[which(qbDat$Season!=2018 & qbDat$DKPt > 32), ]
-qb2018<- qbDat[which(qbDat$Season==2018 & qbDat$DKPt > 32), ]
+## wrangle data for knn
+names(qbDat)
+qbTrim<- trimCols(qbDat)
+head(qbTrim)
+summary(qbTrim$Season)
+summary(qbTrim$Age)
+nrow(qbTrim)
 
 
-qb_train<- trainingIndexes(qbMain)
-qbTrain<- qbMain[qb_train, ]
-qbTrain<- trimCols(qbTrain)
-qbTest<- qbMain[-qb_train, ]
-qbTest<- trimCols(qbTest)
+## add standardized variables
+stdCols<- c("PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG", "NextDKG")
+qbStd<- scale(qbTrim[stdCols])
+head(qbTrim[stdCols])
+head(qbStd[,1])
+paste("std", stdCols[1], sep=".")
 
+standardize<- function(frame, colNames) {
+    for (col in colNames) {
+        print(col)
+    }
+}
+
+   
+## split dataframes
+season.2017<- qbTrim$Season == 2017
+season.2018<- qbTrim$Season == 2018
+train<- !(season.2017 | season.2018)
+summary(season.2017)
+summary(season.2018)
+summary(train)
+qbTrain<- qbTrim[train, ]
+nrow(qbTrain)
+qb.2017<- qbTrim[season.2017, ]
+nrow(qb.2017)
+qb.2018<- qbTrim[season.2018, ]
+nrow(qb.2018)
 
 
 # Models
