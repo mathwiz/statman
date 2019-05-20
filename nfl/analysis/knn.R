@@ -23,17 +23,23 @@ nrow(qbTrim)
 
 
 ## add standardized variables
-stdCols<- c("PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG", "NextDKG")
+stdCols<- c("DKPt", "PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG", "NextDKG")
 qbStd<- scale(qbTrim[stdCols])
 head(qbTrim[stdCols])
 head(qbStd[,1])
 paste("std", stdCols[1], sep=".")
 
 standardize<- function(frame, colNames) {
+    augmented<- frame
     for (col in colNames) {
-        print(col)
+        newCol<- paste("std", col, sep=".")
+        augmented[,newCol]<- scale(frame[,col])
     }
+    return(augmented)
 }
+
+qbAug<- standardize(qbTrim, stdCols)
+head(qbAug)
 
    
 ## split dataframes
