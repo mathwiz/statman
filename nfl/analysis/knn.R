@@ -23,12 +23,12 @@ nrow(qbTrim)
 
 
 ## add standardized variables
-stdCols<- c("DKPt", "PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG", "NextDKG")
-postStdCols <- paste("std", stdCols, sep=".")
-postStdCols
+stdCols<- c("PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG")
+modelCols <- paste("std", stdCols, sep=".")
+modelCols
 qbStd<- scale(qbTrim[stdCols])
 head(qbTrim[stdCols])
-head(qbStd[,1])
+head(qbStd)
 
 standardize<- function(frame, colNames) {
     augmented<- frame
@@ -63,8 +63,15 @@ head(qbTrain[modelCols])
 
 # Models
 
-qbModel<- knn.reg(train=qbTrain[modelCols], y=qbTrain$NextDKG, k=10)
-summary(qbModel)
+qbModel.2017 <- knn.reg(train=qbTrain[modelCols], test=qb.2017[modelCols], y=qbTrain$NextDKG, k=3)
+qbModel.2018 <- knn.reg(train=qbTrain[modelCols], test=qb.2018[modelCols], y=qbTrain$NextDKG, k=10)
+summary(qbModel.2018)
+head(qb.2018)
+qb.2018$pred <- qbModel.2018$pred
+qb.2017$pred <- qbModel.2017$pred
+head(qb.2018[,c("Player", "DKPt", "pred")], n=20)
+head(qb.2017[,c("Player", "NextDKG", "pred")], n=20)
+
 
 rbModel<- lm(NextDKG ~ Age + RuAPG + RuYPG + RuTDPG + ReRPG + ReTDPG, data=rbDat, na.action=na.exclude)
 summary(rbModel)
