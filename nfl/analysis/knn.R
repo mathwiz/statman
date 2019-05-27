@@ -24,10 +24,11 @@ nrow(qbTrim)
 
 ## add standardized variables
 stdCols<- c("DKPt", "PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG", "NextDKG")
+postStdCols <- paste("std", stdCols, sep=".")
+postStdCols
 qbStd<- scale(qbTrim[stdCols])
 head(qbTrim[stdCols])
 head(qbStd[,1])
-paste("std", stdCols[1], sep=".")
 
 standardize<- function(frame, colNames) {
     augmented<- frame
@@ -43,33 +44,36 @@ head(qbAug)
 
    
 ## split dataframes
-season.2017<- qbTrim$Season == 2017
-season.2018<- qbTrim$Season == 2018
+season.2017<- qbAug$Season == 2017
+season.2018<- qbAug$Season == 2018
 train<- !(season.2017 | season.2018)
 summary(season.2017)
 summary(season.2018)
 summary(train)
-qbTrain<- qbTrim[train, ]
+qbTrain<- qbAug[train, ]
 nrow(qbTrain)
-qb.2017<- qbTrim[season.2017, ]
+qb.2017<- qbAug[season.2017, ]
 nrow(qb.2017)
-qb.2018<- qbTrim[season.2018, ]
+qb.2018<- qbAug[season.2018, ]
 nrow(qb.2018)
+head(qbTrain)
+modelCols <- postStdCols[2:10]
+head(qbTrain[modelCols])
 
 
 # Models
 
-qbModel<- lm(NextDKG ~ Age + PaYPG + PaTDPG + RuYPG + RuTDPG, data=qbDat, na.action=na.exclude)
-summary.lm(qbModel)
-
-wrModel<- lm(NextDKG ~ Age + ReRPG + ReYPG + ReTDPG, data=wrDat, na.action=na.exclude)
-summary.lm(wrModel)
-
-teModel<- lm(NextDKG ~ Age + ReRPG + ReTDPG, data=teDat, na.action=na.exclude)
-summary.lm(teModel)
+qbModel<- knn.reg(train=qbTrain[modelCols], y=qbTrain$NextDKG, k=10)
+summary(qbModel)
 
 rbModel<- lm(NextDKG ~ Age + RuAPG + RuYPG + RuTDPG + ReRPG + ReTDPG, data=rbDat, na.action=na.exclude)
-summary.lm(rbModel)
+summary(rbModel)
+
+wrModel<- lm(NextDKG ~ Age + ReRPG + ReYPG + ReTDPG, data=wrDat, na.action=na.exclude)
+summary(wrModel)
+
+teModel<- lm(NextDKG ~ Age + ReRPG + ReTDPG, data=teDat, na.action=na.exclude)
+summary(teModel)
 
 
 # Prediction
