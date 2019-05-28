@@ -8,10 +8,6 @@ trimCols<- function(df) {
     return( df[c("Season", "Rk", "Player", "Age", "G", "DKPt", "PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG", "NextDKG")] )
 }
 
-fiftyFiftySplit<- function(df) {
-    sample.int(nrow(df), nrow(df)/2)
-}
-
 
 ## wrangle data for knn
 names(qbDat)
@@ -24,12 +20,14 @@ nrow(qbTrim)
 
 ## add standardized variables
 stdCols<- c("PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG")
-modelCols <- paste("std", stdCols, sep=".")
-modelCols
-qbStd<- scale(qbTrim[stdCols])
-head(qbTrim[stdCols])
+qbCols<- c("Age", "PaTDPG", "RuTDPG", "PaYPG", "RuYPG", "PaAPG", "RuAPG")
+qbModelCols <- paste("std", qbCols, sep=".")
+qbModelCols
+qbStd<- scale(qbTrim[qbCols])
+head(qbTrim[qbCols])
 head(qbStd)
 
+# no need for this, use scale
 standardize<- function(frame, colNames) {
     augmented<- frame
     for (col in colNames) {
@@ -39,38 +37,40 @@ standardize<- function(frame, colNames) {
     return(augmented)
 }
 
-qbAug<- standardize(qbTrim, stdCols)
+qbAug<- standardize(qbTrim[qbCols], qbCols)
 head(qbAug)
 
    
 ## split dataframes
-season.2017<- qbAug$Season == 2017
-season.2018<- qbAug$Season == 2018
+season.2017<- qbStd$Season == 2017
+season.2018<- qbStd$Season == 2018
 train<- !(season.2017 | season.2018)
 summary(season.2017)
 summary(season.2018)
 summary(train)
-qbTrain<- qbAug[train, ]
-nrow(qbTrain)
-qb.2017<- qbAug[season.2017, ]
-nrow(qb.2017)
-qb.2018<- qbAug[season.2018, ]
-nrow(qb.2018)
+qbTrain<- qbStd[train, ]
 head(qbTrain)
-modelCols <- postStdCols[2:10]
-head(qbTrain[modelCols])
-
-
-# Models
-
-qbModel.2017 <- knn.reg(train=qbTrain[modelCols], test=qb.2017[modelCols], y=qbTrain$NextDKG, k=3)
-qbModel.2018 <- knn.reg(train=qbTrain[modelCols], test=qb.2018[modelCols], y=qbTrain$NextDKG, k=10)
-summary(qbModel.2018)
+qb.2017<- qbStd[season.2017, ]
+head(qb.2017)
+qb.2018<- qbStd[season.2018, ]
 head(qb.2018)
-qb.2018$pred <- qbModel.2018$pred
+
+## get the response values
+outcome <- qbTrim["NextDKG"]
+head(outcome)
+train.out <- outcome[train, ]
+str(train.out)
+
+
+## Models
+
+qbModel.2017 <- knn.reg(train=qbTrain, test=qb.2017, y=train.out, k=5)
+qbModel.2018 <- knn.reg(train=qbTrain[qbModelCols], test=qb.2018[qbModelCols], y=qbTrain$NextDKG, k=5)
+summary(qbModel.2017)
 qb.2017$pred <- qbModel.2017$pred
-head(qb.2018[,c("Player", "DKPt", "pred")], n=20)
-head(qb.2017[,c("Player", "NextDKG", "pred")], n=20)
+qb.2018$pred <- qbModel.2018$pred
+head(qb.2017[,c("Player", "NextDKG", "pred")], n=24)
+head(qb.2018[,c("Player", "DKPt", "pred")], n=24)
 
 
 rbModel<- lm(NextDKG ~ Age + RuAPG + RuYPG + RuTDPG + ReRPG + ReTDPG, data=rbDat, na.action=na.exclude)
