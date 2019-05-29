@@ -18,9 +18,6 @@ summary(qbTrim$Age)
 nrow(qbTrim)
 
 
-## separate outcome into another dataframe
-outcome <- qbTrim %>% dplyr::select(NextDKG)
-
 
 ## add standardized variables
 stdCols<- c("PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG")
@@ -41,9 +38,6 @@ standardize<- function(frame, colNames) {
     return(augmented)
 }
 
-qbAug<- standardize(qbTrim[qbCols], qbCols)
-head(qbAug)
-
    
 ## split dataframes
 season.2017<- qbStd$Season == 2017
@@ -59,22 +53,35 @@ head(qb.2017)
 qb.2018<- qbStd[season.2018, ]
 head(qb.2018)
 
-## get the response values
-outcome <- qbTrim["NextDKG"]
+
+## separate outcome into another dataframe
+outcome <- qbTrim %>% dplyr::select(NextDKG)
 head(outcome)
 train.out <- outcome[train, ]
-str(train.out)
+summary(train.out)
+qb2017.out <- outcome[season.2017, ]
+summary(qb2017.out)
+
+knn.model <- function(frame, outcomes, trainVec, testVec) {
+    train.out <- outcomes[trainVec, ]
+    train <- frame[trainVec, ]
+    test <- frame[testVec, ]
+    return(knn.reg(train=train, test=test, y=train.out, k=3))
+}
 
 
 ## Models
+outcomes <- qbTrim %>% dplyr::select(NextDKG)
+qbModel.2017 <- knn.model(qbStd, outcomes, train, season.2017)
 
-qbModel.2017 <- knn.reg(train=qbTrain, test=qb.2017, y=train.out, k=5)
-qbModel.2018 <- knn.reg(train=qbTrain[qbModelCols], test=qb.2018[qbModelCols], y=qbTrain$NextDKG, k=5)
-head(qbModel.2017)
-qb.2017$pred <- qbModel.2017$pred
-qb.2018$pred <- qbModel.2018$pred
-head(qb.2017[,c("Player", "NextDKG", "pred")], n=24)
-head(qb.2018[,c("Player", "DKPt", "pred")], n=24)
+qbModel.2018 <- knn.reg(train=qbTrain, test=qb.2018, y=train.out, k=3)
+
+summary(qbModel.2017)
+summary(qbModel.2017$pred)
+qbPredictions <- cbind(qbTrim[season.2017, c("Player", "DKPt", "NextDKG")], qbModel.2017$pred)
+qbPredictions <- cbind(qbTrim[season.2018, c("Player", "DKPt", "NextDKG")], qbModel.2018$pred)
+head(qbPredictions, n=20)
+
 
 
 rbModel<- lm(NextDKG ~ Age + RuAPG + RuYPG + RuTDPG + ReRPG + ReTDPG, data=rbDat, na.action=na.exclude)
