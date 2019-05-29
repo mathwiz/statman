@@ -18,6 +18,10 @@ summary(qbTrim$Age)
 nrow(qbTrim)
 
 
+## separate outcome into another dataframe
+outcome <- qbTrim %>% dplyr::select(NextDKG)
+
+
 ## add standardized variables
 stdCols<- c("PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG")
 qbCols<- c("Age", "PaTDPG", "RuTDPG", "PaYPG", "RuYPG", "PaAPG", "RuAPG")
@@ -66,7 +70,7 @@ str(train.out)
 
 qbModel.2017 <- knn.reg(train=qbTrain, test=qb.2017, y=train.out, k=5)
 qbModel.2018 <- knn.reg(train=qbTrain[qbModelCols], test=qb.2018[qbModelCols], y=qbTrain$NextDKG, k=5)
-summary(qbModel.2017)
+head(qbModel.2017)
 qb.2017$pred <- qbModel.2017$pred
 qb.2018$pred <- qbModel.2018$pred
 head(qb.2017[,c("Player", "NextDKG", "pred")], n=24)
