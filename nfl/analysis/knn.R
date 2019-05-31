@@ -17,16 +17,18 @@ trimRows <- function(df, currentSeason) {
 names(qbDat)
 qbTrim<- trimRows(trimCols(qbDat), 2018)
 rbTrim<- trimRows(trimCols(rbDat), 2018)
-tail(rbTrim)
-summary(rbTrim$Age)
-nrow(rbTrim)
+wrTrim<- trimRows(trimCols(wrDat), 2018)
+teTrim<- trimRows(trimCols(teDat), 2018)
+tail(teTrim)
+summary(teTrim$Age)
+nrow(teTrim)
 
 
 ## add standardized variables
 qbCols<- c("Age", "PaTDPG", "RuTDPG", "PaYPG", "RuYPG", "PaAPG", "RuAPG")
-rbCols <- c("Age", "RuTDPG", "RuYPG", "ReTDPG", "ReRPG")
-wrCols <- c("Age", "ReTDPG", "ReRPG")
-teCols <- c("Age", "ReTDPG", "ReRPG")
+rbCols <- c("Age", "RuTDPG", "RuYPG", "RuAPG", "ReTDPG", "ReYPG", "ReRPG")
+wrCols <- c("Age", "ReTDPG", "ReYPG", "ReRPG")
+teCols <- c("Age", "ReTDPG", "ReYPG", "ReRPG")
 head(rbTrim[rbCols])
 
 
@@ -67,6 +69,30 @@ rbPredictions <- make.predictions(rbTrim, rbCols, reportCols, rb.train, rb.seaso
 head(rbPredictions, n=40)
 rbReport<- add.differential(rbPredictions, 20)
 dplyr::select(rbReport, Player, DKPt, NextDKG, fit, differential)[order(-rbReport$fit), ]
+
+
+wr.season.2017<- wrTrim$Season == 2017
+wr.season.2018<- wrTrim$Season == 2018
+wr.train<- !(season.2017 | season.2018)
+wrPredictions <- make.predictions(wrTrim, wrCols, reportCols, wr.train, wr.season.2017)
+wrPredictions <- make.predictions(wrTrim, wrCols, reportCols, wr.train, wr.season.2018)
+head(wrPredictions, n=50)
+wrReport<- add.differential(wrPredictions, 25)
+dplyr::select(wrReport, Player, DKPt, NextDKG, fit, differential)[order(-wrReport$fit), ]
+
+
+te.season.2017<- teTrim$Season == 2017
+te.season.2018<- teTrim$Season == 2018
+te.train<- !(season.2017 | season.2018)
+tePredictions <- make.predictions(teTrim, teCols, reportCols, te.train, te.season.2017)
+tePredictions <- make.predictions(teTrim, teCols, reportCols, te.train, te.season.2018)
+head(tePredictions, n=20)
+teReport<- add.differential(tePredictions, 20)
+dplyr::select(teReport, Player, DKPt, NextDKG, fit, differential)[order(-teReport$fit), ]
+
+
+allPred<- rbind(rbReport, wrReport, teReport, qbReport)
+dplyr::select(allPred, Player, DKPt, fit, NextDKG, differential)[order(-allPred$differential), ]
 
 
 # Prediction
