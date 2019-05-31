@@ -13,20 +13,14 @@ trimCols<- function(df) {
 names(qbDat)
 qbTrim<- trimCols(qbDat)
 head(qbTrim)
-summary(qbTrim$Season)
 summary(qbTrim$Age)
 nrow(qbTrim)
 
 
-
 ## add standardized variables
-stdCols<- c("PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG")
 qbCols<- c("Age", "PaTDPG", "RuTDPG", "PaYPG", "RuYPG", "PaAPG", "RuAPG")
-qbModelCols <- paste("std", qbCols, sep=".")
-qbModelCols
-qbStd<- scale(qbTrim[qbCols])
 head(qbTrim[qbCols])
-head(qbStd)
+
 
 # no need for this, use scale
 standardize<- function(frame, colNames) {
@@ -43,45 +37,28 @@ standardize<- function(frame, colNames) {
 season.2017<- qbStd$Season == 2017
 season.2018<- qbStd$Season == 2018
 train<- !(season.2017 | season.2018)
-summary(season.2017)
-summary(season.2018)
-summary(train)
-qbTrain<- qbStd[train, ]
-head(qbTrain)
-qb.2017<- qbStd[season.2017, ]
-head(qb.2017)
-qb.2018<- qbStd[season.2018, ]
-head(qb.2018)
 
 
-## separate outcome into another dataframe
-outcome <- qbTrim %>% dplyr::select(NextDKG)
-head(outcome)
-train.out <- outcome[train, ]
-summary(train.out)
-qb2017.out <- outcome[season.2017, ]
-summary(qb2017.out)
-
-knn.model <- function(frame, outcomes, trainVec, testVec) {
+knn.model <- function(frame, modelColumns, trainVec, testVec) {
+    outcomes <- frame %>% dplyr::select(NextDKG)
+    model <-  scale(frame[modelColumns])
     train.out <- outcomes[trainVec, ]
-    train <- frame[trainVec, ]
-    test <- frame[testVec, ]
+    train <- model[trainVec, ]
+    test <- model[testVec, ]
     return(knn.reg(train=train, test=test, y=train.out, k=3))
+}
+
+make.predictions <- function(frame, modelCols, reportCols, trainVec, testVec) {
+    predictFrame <- frame[testVec, ]
+    model <- knn.model(frame, modelCols, trainVec, testVec)
+    return(cbind(predictFrame[, reportCols], model$pred))
 }
 
 
 ## Models
-outcomes <- qbTrim %>% dplyr::select(NextDKG)
-qbModel.2017 <- knn.model(qbStd, outcomes, train, season.2017)
-
-qbModel.2018 <- knn.reg(train=qbTrain, test=qb.2018, y=train.out, k=3)
-
-summary(qbModel.2017)
-summary(qbModel.2017$pred)
-qbPredictions <- cbind(qbTrim[season.2017, c("Player", "DKPt", "NextDKG")], qbModel.2017$pred)
-qbPredictions <- cbind(qbTrim[season.2018, c("Player", "DKPt", "NextDKG")], qbModel.2018$pred)
+qbPredictions <- make.predictions(qbTrim, qbCols, c("Player", "DKPt", "NextDKG"), train, season.2017)
+qbPredictions <- make.predictions(qbTrim, qbCols, c("Player", "DKPt", "NextDKG"), train, season.2018)
 head(qbPredictions, n=20)
-
 
 
 rbModel<- lm(NextDKG ~ Age + RuAPG + RuYPG + RuTDPG + ReRPG + ReTDPG, data=rbDat, na.action=na.exclude)
