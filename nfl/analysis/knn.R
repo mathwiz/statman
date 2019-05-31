@@ -8,11 +8,15 @@ trimCols<- function(df) {
     return( df[c("Season", "Rk", "Player", "Age", "G", "DKPt", "PaTDPG", "RuTDPG", "ReTDPG", "PaYPG", "RuYPG", "ReYPG", "PaAPG", "RuAPG", "ReRPG", "NextDKG")] )
 }
 
+trimRows <- function(df, currentSeason) {
+    return(df[df$Season==currentSeason | !is.na(df$NextDKG),])
+}
+
 
 ## wrangle data for knn
 names(qbDat)
-qbTrim<- trimCols(qbDat)
-head(qbTrim)
+qbTrim<- trimRows(trimCols(qbDat), 2018)
+tail(qbTrim)
 summary(qbTrim$Age)
 nrow(qbTrim)
 
@@ -22,20 +26,9 @@ qbCols<- c("Age", "PaTDPG", "RuTDPG", "PaYPG", "RuYPG", "PaAPG", "RuAPG")
 head(qbTrim[qbCols])
 
 
-# no need for this, use scale
-standardize<- function(frame, colNames) {
-    augmented<- frame
-    for (col in colNames) {
-        newCol<- paste("std", col, sep=".")
-        augmented[,newCol]<- scale(frame[,col])
-    }
-    return(augmented)
-}
-
-   
 ## split dataframes
-season.2017<- qbStd$Season == 2017
-season.2018<- qbStd$Season == 2018
+season.2017<- qbTrim$Season == 2017
+season.2018<- qbTrim$Season == 2018
 train<- !(season.2017 | season.2018)
 
 
