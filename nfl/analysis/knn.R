@@ -16,20 +16,18 @@ trimRows <- function(df, currentSeason) {
 ## wrangle data for knn
 names(qbDat)
 qbTrim<- trimRows(trimCols(qbDat), 2018)
-tail(qbTrim)
-summary(qbTrim$Age)
-nrow(qbTrim)
+rbTrim<- trimRows(trimCols(rbDat), 2018)
+tail(rbTrim)
+summary(rbTrim$Age)
+nrow(rbTrim)
 
 
 ## add standardized variables
 qbCols<- c("Age", "PaTDPG", "RuTDPG", "PaYPG", "RuYPG", "PaAPG", "RuAPG")
-head(qbTrim[qbCols])
-
-
-## split dataframes
-season.2017<- qbTrim$Season == 2017
-season.2018<- qbTrim$Season == 2018
-train<- !(season.2017 | season.2018)
+rbCols <- c("Age", "RuTDPG", "RuYPG", "ReTDPG", "ReRPG")
+wrCols <- c("Age", "ReTDPG", "ReRPG")
+teCols <- c("Age", "ReTDPG", "ReRPG")
+head(rbTrim[rbCols])
 
 
 knn.model <- function(frame, modelColumns, trainVec, testVec) {
@@ -38,42 +36,45 @@ knn.model <- function(frame, modelColumns, trainVec, testVec) {
     train.out <- outcomes[trainVec, ]
     train <- model[trainVec, ]
     test <- model[testVec, ]
-    return(knn.reg(train=train, test=test, y=train.out, k=3))
+    return(knn.reg(train=train, test=test, y=train.out, k=5))
 }
 
 make.predictions <- function(frame, modelCols, reportCols, trainVec, testVec) {
-    predictFrame <- frame[testVec, ]
+    predictFrame <- frame[testVec, reportCols]
     model <- knn.model(frame, modelCols, trainVec, testVec)
-    return(cbind(predictFrame[, reportCols], model$pred))
+    predictFrame$pred <- model$pred #cbind(predictFrame[, reportCols], model$pred)
+    return(predictFrame)
 }
 
 
 ## Models
-qbPredictions <- make.predictions(qbTrim, qbCols, c("Player", "DKPt", "NextDKG"), train, season.2017)
-qbPredictions <- make.predictions(qbTrim, qbCols, c("Player", "DKPt", "NextDKG"), train, season.2018)
+reportCols <- c("Player", "DKPt", "NextDKG")
+season.2017<- qbTrim$Season == 2017
+season.2018<- qbTrim$Season == 2018
+train<- !(season.2017 | season.2018)
+qbPredictions <- make.predictions(qbTrim, qbCols, reportCols, train, season.2017)
+qbPredictions <- make.predictions(qbTrim, qbCols, reportCols, train, season.2018)
 head(qbPredictions, n=20)
+qbReport<- add.differential(qbPredictions, 20)
+dplyr::select(qbReport, Player, DKPt, NextDKG, fit, differential)[order(-qbReport$fit), ]
 
 
-rbModel<- lm(NextDKG ~ Age + RuAPG + RuYPG + RuTDPG + ReRPG + ReTDPG, data=rbDat, na.action=na.exclude)
-summary(rbModel)
-
-wrModel<- lm(NextDKG ~ Age + ReRPG + ReYPG + ReTDPG, data=wrDat, na.action=na.exclude)
-summary(wrModel)
-
-teModel<- lm(NextDKG ~ Age + ReRPG + ReTDPG, data=teDat, na.action=na.exclude)
-summary(teModel)
+rb.season.2017<- rbTrim$Season == 2017
+rb.season.2018<- rbTrim$Season == 2018
+rb.train<- !(season.2017 | season.2018)
+rbPredictions <- make.predictions(rbTrim, rbCols, reportCols, rb.train, rb.season.2017)
+rbPredictions <- make.predictions(rbTrim, rbCols, reportCols, rb.train, rb.season.2018)
+head(rbPredictions, n=40)
+rbReport<- add.differential(rbPredictions, 20)
+dplyr::select(rbReport, Player, DKPt, NextDKG, fit, differential)[order(-rbReport$fit), ]
 
 
 # Prediction
-addPrediction<- function(data, model, season, n) {
-	newDat<- data[which(data$Season==season), ]
-	newDat$DKPG<- newDat$DKPt / newDat$G 
-	newDat$fit<- predict(model, newDat, interval="predict")[,1]
-	newDat<- top_n(newDat, n*2, newDat$DKPG)
-	avgPrediction<- mean(newDat$fit)
-	newDat$differential<- newDat$fit - avgPrediction
-	return(newDat)
+add.differential <- function(data, n) {
+    newDat <- data
+    newDat$fit <- newDat$pred
+    avgPrediction <- mean(newDat$fit, na.rm=TRUE)
+    newDat$differential <- newDat$fit - avgPrediction
+    return(newDat)
 }
 
-qb2018<- addPrediction(qbDat, qbModel, 2018, 16)
-dplyr::select(qb2018, Player, DKPt, DKPG, fit, differential)[order(-qb2018$fit), ]
