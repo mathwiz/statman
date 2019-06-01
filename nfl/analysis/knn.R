@@ -13,7 +13,7 @@ trimRows <- function(df, currentSeason) {
 }
 
 
-knn.model <- function(frame, modelColumns, trainVec, testVec, k=5) {
+knn.model <- function(frame, modelColumns, trainVec, testVec, k) {
     outcomes <- frame %>% dplyr::select(NextDKG)
     model <-  scale(frame[modelColumns])
     train.out <- outcomes[trainVec, ]
@@ -22,9 +22,9 @@ knn.model <- function(frame, modelColumns, trainVec, testVec, k=5) {
     return(knn.reg(train=train, test=test, y=train.out, k=k))
 }
 
-make.predictions <- function(frame, modelCols, reportCols, trainVec, testVec) {
+make.predictions <- function(frame, modelCols, reportCols, trainVec, testVec, k) {
     predictFrame <- frame[testVec, reportCols]
-    model <- knn.model(frame, modelCols, trainVec, testVec)
+    model <- knn.model(frame, modelCols, trainVec, testVec, k)
     predictFrame$pred <- model$pred
     return(predictFrame)
 }
@@ -40,11 +40,11 @@ add.differential <- function(data, n) {
     return(newDat)
 }
 
-report <- function(frame, modelCols, season, length=20, k=5) {
+report <- function(frame, modelCols, season, length=20, k) {
     reportCols <- c("Player", "DKPt", "NextDKG")
     testVec <- frame$Season == season
     trainVec <- !testVec
-    predictions <- make.predictions(frame, modelCols, reportCols, trainVec, testVec)
+    predictions <- make.predictions(frame, modelCols, reportCols, trainVec, testVec, k=k)
     modelFrame <- add.differential(predictions, length)
     report <- dplyr::select(modelFrame, Player, DKPt, NextDKG, fit, differential, replacement)[order(-modelFrame$fit), ]
     return(report)
