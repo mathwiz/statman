@@ -16,6 +16,13 @@ rbModel<- lm(NextDKG ~ Age + RuAPG + RuYPG + RuTDPG + ReRPG + ReTDPG + RuAPG:ReR
 summary.lm(rbModel)
 
 
+## Residuals
+plot(qbModel$fitted.values, qbModel$residuals)
+plot(rbModel$fitted.values, rbModel$residuals)
+plot(wrModel$fitted.values, wrModel$residuals)
+plot(teModel$fitted.values, teModel$residuals)
+
+
 # Prediction
 addPrediction<- function(data, model, season, n) {
 	newDat<- data[which(data$Season==season), ]

@@ -52,7 +52,7 @@ report <- function(frame, modelCols, season, length=20, k) {
 
 
 ## add standardized variables
-qbCols <- c("Age", "PaCmp", "PaAtt", "PaTDPG", "RuTDPG", "PaYPG", "RuYPG", "PaAPG", "RuAPG")
+qbCols <- c("Age", "PaCmp", "PaTDPG", "RuTDPG", "PaYPG", "RuYPG", "PaAPG", "RuAPG")
 rbCols <- c("Age", "RuTDPG", "RuYPG", "RuAPG", "ReTDPG", "ReYPG", "ReRPG")
 wrCols <- c("Age", "ReTDPG", "ReYPG", "ReRPG", "RuYPG", "RuAPG", "RuTDPG")
 teCols <- c("Age", "ReTDPG", "ReYPG", "ReRPG")
