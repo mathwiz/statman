@@ -3,13 +3,13 @@ library(dplyr)
 
 # Models
 
-qbModel<- lm(NextDKG ~ Age + PaYPG + PaAPG + RuYPG + RuTDPG + PaAPG:PaTDPG + PaAPG:PaYPG, data=qbDat, na.action=na.exclude)
+qbModel<- lm(NextDKG ~ Age + PaTDPG + PaYPG + PaAPG + RuYPG + RuTDPG + PaAPG:PaYPG, data=qbDat, na.action=na.exclude)
 summary.lm(qbModel)
 
 wrModel<- lm(NextDKG ~ Age + ReRPG + ReYPG + ReTDPG + ReYPG:ReRPG, data=wrDat, na.action=na.exclude)
 summary.lm(wrModel)
 
-teModel<- lm(NextDKG ~ Age + ReRPG + ReTDPG + ReRPG:ReTDPG, data=teDat, na.action=na.exclude)
+teModel<- lm(NextDKG ~ Age + ReYPG + ReRPG + ReTDPG + ReRPG:ReTDPG, data=teDat, na.action=na.exclude)
 summary.lm(teModel)
 
 rbModel<- lm(NextDKG ~ Age + RuAPG + RuYPG + RuTDPG + ReRPG + ReTDPG + RuAPG:ReRPG, data=rbDat, na.action=na.exclude)
